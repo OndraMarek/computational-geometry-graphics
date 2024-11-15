@@ -15,12 +15,36 @@ namespace DrawBresenhamLine
 
         public void DrawLine(int x1, int y1, int x2, int y2)
         {
-
             DrawPoint(x1, y1);
             DrawPoint(x2, y2);
 
             ConvertCordinates(ref x1, ref y1);
             ConvertCordinates(ref x2, ref y2);
+
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+            int sx = x1 < x2 ? 1 : -1;
+            int sy = y1 < y2 ? 1 : -1;
+            int e = dx - dy;
+
+            while (true)
+            {
+                DrawPixel(x1, y1);
+
+                if (x1 == x2 && y1 == y2) break;
+
+                int e2 = 2 * e;
+                if (e2 > -dy)
+                {
+                    e -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx)
+                {
+                    e += dx;
+                    y1 += sy;
+                }
+            }
         }
 
         private void DrawPixel(double x, double y)
