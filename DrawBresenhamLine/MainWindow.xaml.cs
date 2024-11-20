@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -10,7 +12,6 @@ namespace DrawBresenhamLine
         public MainWindow()
         {
             InitializeComponent();
-            DrawLine(0, 0, 100, 200);
         }
 
         public void DrawLine(int x1, int y1, int x2, int y2)
@@ -84,6 +85,25 @@ namespace DrawBresenhamLine
             y = -y;
             x += (int)(drawLineCanvas.Width / 2);
             y += (int)(drawLineCanvas.Height / 2);
+        }
+
+        private void ClearCanvas()
+        {
+            drawLineCanvas.Children.Clear();
+        }
+        private void drawLineButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+            int x1 = x1TextBox.Text != "" ? int.Parse(x1TextBox.Text) : 0;
+            int y1 = y1TextBox.Text != "" ? int.Parse(y1TextBox.Text) : 0;
+            int x2 = x2TextBox.Text != "" ? int.Parse(x2TextBox.Text) : 0;
+            int y2 = y2TextBox.Text != "" ? int.Parse(y2TextBox.Text) : 0;
+            DrawLine(x1, y1, x2, y2);
+        }
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9-]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }
