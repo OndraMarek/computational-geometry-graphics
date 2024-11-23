@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace DrawLine
+namespace DrawLineBresenham
 {
     public partial class MainWindow : Window
     {
@@ -16,28 +16,36 @@ namespace DrawLine
 
         public void DrawLine(int x1, int y1, int x2, int y2)
         {
-
             DrawPoint(x1, y1);
             DrawPoint(x2, y2);
 
             ConvertCordinates(ref x1, ref y1);
             ConvertCordinates(ref x2, ref y2);
 
-            int dx = x2 - x1;
-            int dy = y2 - y1; 
-            double steps = Math.Abs(dx) > Math.Abs(dy) ?  Math.Abs(dx) : Math.Abs(dy);
-            double x = x1;
-            double y = y1;
-            double DX = dx / steps;
-            double DY = dy / steps;
-            
-            for(int i = 0; i <= steps; i++)
-            {
-                DrawPixel(Math.Round(x), Math.Round(y));
-                x = x + DX;
-                y = y + DY;
-            }
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+            int sx = x1 < x2 ? 1 : -1;
+            int sy = y1 < y2 ? 1 : -1;
+            int e = dx - dy;
 
+            while (true)
+            {
+                DrawPixel(x1, y1);
+
+                if (x1 == x2 && y1 == y2) break;
+
+                int e2 = 2 * e;
+                if (e2 > -dy)
+                {
+                    e -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx)
+                {
+                    e += dx;
+                    y1 += sy;
+                }
+            }
         }
 
         private void DrawPixel(double x, double y)
@@ -45,14 +53,14 @@ namespace DrawLine
             Rectangle pixel = new Rectangle
             {
                 Width = 1,
-                Height = 1, 
+                Height = 1,
                 Fill = new SolidColorBrush(Colors.Black)
             };
 
             Canvas.SetLeft(pixel, x);
-            Canvas.SetTop(pixel, y); 
+            Canvas.SetTop(pixel, y);
 
-            drawLineCanvas.Children.Add(pixel); 
+            drawLineCanvas.Children.Add(pixel);
         }
 
         private void DrawPoint(int x, int y)
@@ -67,7 +75,7 @@ namespace DrawLine
             };
 
             Canvas.SetLeft(point, x - 2.5);
-            Canvas.SetTop(point, y - 2.5); 
+            Canvas.SetTop(point, y - 2.5);
 
             drawLineCanvas.Children.Add(point);
         }
@@ -78,11 +86,11 @@ namespace DrawLine
             x += (int)(drawLineCanvas.Width / 2);
             y += (int)(drawLineCanvas.Height / 2);
         }
+
         private void ClearCanvas()
         {
             drawLineCanvas.Children.Clear();
         }
-
         private void drawLineButton_Click(object sender, RoutedEventArgs e)
         {
             ClearCanvas();
@@ -92,7 +100,6 @@ namespace DrawLine
             int y2 = y2TextBox.Text != "" ? int.Parse(y2TextBox.Text) : 0;
             DrawLine(x1, y1, x2, y2);
         }
-
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9-]+");
