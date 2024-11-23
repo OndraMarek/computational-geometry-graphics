@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -16,22 +15,38 @@ namespace DrawCircleLineSegment
 
         public void DrawCircle(int x, int y, int points, int radius)
         {
-            return;
+            ConvertCordinates(ref x, ref y);
+
+            double alpha = 2 * Math.PI / points;
+            double x1 = radius;
+            double y1 = 0;
+            double x2, y2;
+
+            for (int i = 1; i <= points; i++)
+            {
+                x2 = radius * Math.Cos(i * alpha);
+                y2 = radius * Math.Sin(i * alpha);
+
+                DrawLine(x + x1, y + y1, x + x2, y + y2);
+
+                x1 = x2;
+                y1 = y2;
+            }
         }
 
-        private void DrawPixel(double x, double y)
+        private void DrawLine(double x1, double y1, double x2, double y2)
         {
-            Rectangle pixel = new Rectangle
+            Line line = new Line
             {
-                Width = 1,
-                Height = 1,
-                Fill = new SolidColorBrush(Colors.Black)
+                Stroke = Brushes.Black,
+                X1 = x1,
+                Y1 = y1,
+                X2 = x2,
+                Y2 = y2,
+                StrokeThickness = 1
             };
 
-            Canvas.SetLeft(pixel, x);
-            Canvas.SetTop(pixel, y);
-
-            drawCircleCanvas.Children.Add(pixel);
+            drawCircleCanvas.Children.Add(line);
         }
 
         private void ConvertCordinates(ref int x, ref int y)
