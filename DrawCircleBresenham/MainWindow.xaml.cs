@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -13,25 +14,58 @@ namespace DrawCircleBresenham
             InitializeComponent();
         }
 
-        public void DrawCircle(int x, int y, int radius)
+        public void DrawCircle(int xCenter, int yCenter, int radius)
         {
-            return;
-        }
+            ConvertCordinates(ref xCenter, ref yCenter);
 
-        private void DrawLine(double x1, double y1, double x2, double y2)
-        {
-            Line line = new Line
+            int x = 0;
+            int y = radius;
+            int dvex = 3;
+            int dvey = 2 * radius - 2;
+            int prediction = 1 - radius;
+
+            while (x <= y)
             {
-                Stroke = Brushes.Black,
-                X1 = x1,
-                Y1 = y1,
-                X2 = x2,
-                Y2 = y2,
-                StrokeThickness = 1
-            };
+                DrawSymmetricPoints(xCenter, yCenter, x, y);
 
-            drawCircleCanvas.Children.Add(line);
+                if (prediction >= 0)
+                {
+                    prediction -= dvey;
+                    dvey -= 2;
+                    y--;
+                }
+
+                prediction += dvex;
+                dvex += 2;
+                x++;
+            }
         }
+
+        private void DrawSymmetricPoints(int xCenter, int yCenter, int x, int y)
+        {
+            DrawPixel(xCenter + x, yCenter + y);
+            DrawPixel(xCenter - x, yCenter + y);
+            DrawPixel(xCenter + x, yCenter - y);
+            DrawPixel(xCenter - x, yCenter - y);
+            DrawPixel(xCenter + y, yCenter + x);
+            DrawPixel(xCenter - y, yCenter + x);
+            DrawPixel(xCenter + y, yCenter - x);
+            DrawPixel(xCenter - y, yCenter - x);
+        }
+
+        private void DrawPixel(int x, int y)
+        {
+            Rectangle rectangle = new Rectangle
+            {
+                Width = 1,
+                Height = 1,
+                Fill = Brushes.Black
+            };
+            Canvas.SetLeft(rectangle, x);
+            Canvas.SetTop(rectangle, y);
+            drawCircleCanvas.Children.Add(rectangle);
+        }
+
 
         private void ConvertCordinates(ref int x, ref int y)
         {
