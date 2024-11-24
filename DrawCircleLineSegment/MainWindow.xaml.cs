@@ -13,9 +13,9 @@ namespace DrawCircleLineSegment
             InitializeComponent();
         }
 
-        public void DrawCircle(int x, int y, int points, int radius)
+        public void DrawCircle(int xCenter, int yCenter, int points, int radius)
         {
-            ConvertCordinates(ref x, ref y);
+            ConvertCordinates(ref xCenter, ref yCenter);
 
             double alpha = 2 * Math.PI / points;
             double x1 = radius;
@@ -27,7 +27,7 @@ namespace DrawCircleLineSegment
                 x2 = radius * Math.Cos(i * alpha);
                 y2 = radius * Math.Sin(i * alpha);
 
-                DrawLine(x + x1, y + y1, x + x2, y + y2);
+                DrawLine(xCenter + x1, yCenter + y1, xCenter + x2, yCenter + y2);
 
                 x1 = x2;
                 y1 = y2;

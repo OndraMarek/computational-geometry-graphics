@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="Draw circle using line segments" Height="700" Width="800">
     <Grid>
-        <Label Content="Coordinates of the center" Margin="66,9,582,0" VerticalAlignment="Top" />
+        <Label Content="Coordinates of the center" Margin="56,9,582,0" VerticalAlignment="Top"/>
         <Label Content="X:" HorizontalAlignment="Left" Margin="55,35,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="xTextBox" HorizontalAlignment="Left" Height="23" Margin="78,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" PreviewTextInput="NumberValidationTextBox"/>
         <Label Content="Y:" HorizontalAlignment="Left" Margin="155,35,0,0" VerticalAlignment="Top"/>
