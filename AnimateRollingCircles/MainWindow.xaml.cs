@@ -3,7 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+
 namespace AnimateRollingCircles
 {
     public partial class MainWindow : Window
@@ -12,6 +14,7 @@ namespace AnimateRollingCircles
         {
             InitializeComponent();
         }
+
         public void AnimateRollingCircles(int x, int y, int radius1, int radius2)
         {
             ConvertCoordinates(ref x, ref y);
@@ -19,19 +22,21 @@ namespace AnimateRollingCircles
             Canvas circle2 = DrawCircle(x + radius1 + radius2, y, radius2);
             animateRollingCirclesCanvas.Children.Add(circle1);
             animateRollingCirclesCanvas.Children.Add(circle2);
+            StartRotationAnimation(circle2);
         }
 
         private Canvas DrawCircle(int x, int y, int radius)
         {
             Canvas groupCanvas = new Canvas();
 
-            
             groupCanvas.Children.Add(DrawEllipse(radius));
-            groupCanvas.Children.Add(DrawLine(0, radius, radius*2, radius));
-            groupCanvas.Children.Add(DrawLine(radius, 0, radius, radius*2));
+            groupCanvas.Children.Add(DrawLine(0, radius, radius * 2, radius));
+            groupCanvas.Children.Add(DrawLine(radius, 0, radius, radius * 2));
 
             Canvas.SetLeft(groupCanvas, x - radius);
             Canvas.SetTop(groupCanvas, y - radius);
+
+            groupCanvas.RenderTransform = new RotateTransform(0, radius, radius);
 
             return groupCanvas;
         }
@@ -75,11 +80,13 @@ namespace AnimateRollingCircles
         {
             animateRollingCirclesCanvas.Children.Clear();
         }
+
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9-]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
         private void animateRollingCirclesButton_Click(object sender, RoutedEventArgs e)
         {
             ClearCanvas();
@@ -88,6 +95,14 @@ namespace AnimateRollingCircles
             int radius1 = radius1TextBox.Text != "" ? int.Parse(radius1TextBox.Text) : 0;
             int radius2 = radius2TextBox.Text != "" ? int.Parse(radius2TextBox.Text) : 0;
             AnimateRollingCircles(x, y, radius1, radius2);
+        }
+
+        private void StartRotationAnimation(UIElement element)
+        {
+            Storyboard storyboard = (Storyboard)FindResource("RotateAnimation");
+            storyboard.Children[0].SetValue(Storyboard.TargetProperty, element);
+            storyboard.Children[0].SetValue(Storyboard.TargetPropertyProperty, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+            storyboard.Begin();
         }
     }
 }
