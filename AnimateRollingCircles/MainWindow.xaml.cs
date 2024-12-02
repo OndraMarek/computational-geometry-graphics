@@ -5,11 +5,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace AnimateRollingCircles
 {
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -23,6 +25,7 @@ namespace AnimateRollingCircles
             animateRollingCirclesCanvas.Children.Add(circle1);
             animateRollingCirclesCanvas.Children.Add(circle2);
             StartRotationAnimation(circle2);
+            StartOrbitAnimation(circle2, x, y, radius1, radius2);
         }
 
         private Canvas DrawCircle(int x, int y, int radius)
@@ -100,9 +103,32 @@ namespace AnimateRollingCircles
         private void StartRotationAnimation(UIElement element)
         {
             Storyboard storyboard = (Storyboard)FindResource("RotateAnimation");
-            storyboard.Children[0].SetValue(Storyboard.TargetProperty, element);
-            storyboard.Children[0].SetValue(Storyboard.TargetPropertyProperty, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+            Storyboard.SetTarget(storyboard, element);
             storyboard.Begin();
+        }
+
+        private void StartOrbitAnimation(UIElement element, int centerX, int centerY, int radius1, int radius2)
+        {
+            int orbitRadius = radius1 + radius2;
+            double angle = 0;
+
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(40)
+            };
+            timer.Tick += (s, e) =>
+            {
+                angle += 1.7;
+                if (angle >= 360) angle = 0;
+
+                double radians = angle * Math.PI / 180;
+                double newX = centerX + orbitRadius * Math.Cos(radians) - radius2;
+                double newY = centerY + orbitRadius * Math.Sin(radians) - radius2;
+
+                Canvas.SetLeft(element, newX);
+                Canvas.SetTop(element, newY);
+            };
+            timer.Start();
         }
     }
 }
