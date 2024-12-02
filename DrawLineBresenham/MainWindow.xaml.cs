@@ -19,8 +19,8 @@ namespace DrawLineBresenham
             DrawPoint(x1, y1);
             DrawPoint(x2, y2);
 
-            ConvertCordinates(ref x1, ref y1);
-            ConvertCordinates(ref x2, ref y2);
+            ConvertCoordinates(ref x1, ref y1);
+            ConvertCoordinates(ref x2, ref y2);
 
             int dx = Math.Abs(x2 - x1);
             int dy = Math.Abs(y2 - y1);
@@ -65,7 +65,7 @@ namespace DrawLineBresenham
 
         private void DrawPoint(int x, int y)
         {
-            ConvertCordinates(ref x, ref y);
+            ConvertCoordinates(ref x, ref y);
 
             Ellipse point = new Ellipse
             {
@@ -80,7 +80,7 @@ namespace DrawLineBresenham
             drawLineCanvas.Children.Add(point);
         }
 
-        private void ConvertCordinates(ref int x, ref int y)
+        private void ConvertCoordinates(ref int x, ref int y)
         {
             y = -y;
             x += (int)(drawLineCanvas.Width / 2);

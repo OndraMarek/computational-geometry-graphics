@@ -16,7 +16,7 @@ namespace DrawCircleBresenham
 
         public void DrawCircle(int xCenter, int yCenter, int radius)
         {
-            ConvertCordinates(ref xCenter, ref yCenter);
+            ConvertCoordinates(ref xCenter, ref yCenter);
 
             int x = 0;
             int y = radius;
@@ -67,7 +67,7 @@ namespace DrawCircleBresenham
         }
 
 
-        private void ConvertCordinates(ref int x, ref int y)
+        private void ConvertCoordinates(ref int x, ref int y)
         {
             y = -y;
             x += (int)(drawCircleCanvas.Width / 2);

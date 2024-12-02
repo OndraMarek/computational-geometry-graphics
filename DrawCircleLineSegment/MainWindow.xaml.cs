@@ -15,7 +15,7 @@ namespace DrawCircleLineSegment
 
         public void DrawCircle(int xCenter, int yCenter, int points, int radius)
         {
-            ConvertCordinates(ref xCenter, ref yCenter);
+            ConvertCoordinates(ref xCenter, ref yCenter);
 
             double alpha = 2 * Math.PI / points;
             double x1 = radius;
@@ -49,7 +49,7 @@ namespace DrawCircleLineSegment
             drawCircleCanvas.Children.Add(line);
         }
 
-        private void ConvertCordinates(ref int x, ref int y)
+        private void ConvertCoordinates(ref int x, ref int y)
         {
             y = -y;
             x += (int)(drawCircleCanvas.Width / 2);
