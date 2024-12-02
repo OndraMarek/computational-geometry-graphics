@@ -1,6 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 namespace AnimateRollingCircles
 {
     public partial class MainWindow : Window
@@ -11,11 +14,57 @@ namespace AnimateRollingCircles
         }
         public void AnimateRollingCircles(int x, int y, int radius1, int radius2)
         {
-            ConvertCordinates(ref x, ref y);
-
+            ConvertCoordinates(ref x, ref y);
+            Canvas circle1 = DrawCircle(x, y, radius1);
+            Canvas circle2 = DrawCircle(x + radius1 + radius2, y, radius2);
+            animateRollingCirclesCanvas.Children.Add(circle1);
+            animateRollingCirclesCanvas.Children.Add(circle2);
         }
 
-        private void ConvertCordinates(ref int x, ref int y)
+        private Canvas DrawCircle(int x, int y, int radius)
+        {
+            Canvas groupCanvas = new Canvas();
+
+            
+            groupCanvas.Children.Add(DrawEllipse(radius));
+            groupCanvas.Children.Add(DrawLine(0, radius, radius*2, radius));
+            groupCanvas.Children.Add(DrawLine(radius, 0, radius, radius*2));
+
+            Canvas.SetLeft(groupCanvas, x - radius);
+            Canvas.SetTop(groupCanvas, y - radius);
+
+            return groupCanvas;
+        }
+
+        private Ellipse DrawEllipse(int radius)
+        {
+            Ellipse ellipse = new Ellipse
+            {
+                Width = radius * 2,
+                Height = radius * 2,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+            Canvas.SetLeft(ellipse, 0);
+            Canvas.SetTop(ellipse, 0);
+            return ellipse;
+        }
+
+        private Line DrawLine(int x1, int y1, int x2, int y2)
+        {
+            Line line = new Line
+            {
+                X1 = x1,
+                Y1 = y1,
+                X2 = x2,
+                Y2 = y2,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+            return line;
+        }
+
+        private void ConvertCoordinates(ref int x, ref int y)
         {
             y = -y;
             x += (int)(animateRollingCirclesCanvas.Width / 2);
