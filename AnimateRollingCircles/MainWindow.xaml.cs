@@ -17,18 +17,18 @@ namespace AnimateRollingCircles
             InitializeComponent();
         }
 
-        public void AnimateRollingCircles(int x, int y, int radius1, int radius2)
+        public void AnimateRollingCircles(int xCenter, int yCenter, int radius1, int radius2)
         {
-            ConvertCoordinates(ref x, ref y);
-            Canvas circle1 = DrawCircle(x, y, radius1);
-            Canvas circle2 = DrawCircle(x + radius1 + radius2, y, radius2);
+            ConvertCoordinates(ref xCenter, ref yCenter);
+            Canvas circle1 = DrawCircle(xCenter, yCenter, radius1);
+            Canvas circle2 = DrawCircle(xCenter + radius1 + radius2, yCenter, radius2);
             animateRollingCirclesCanvas.Children.Add(circle1);
             animateRollingCirclesCanvas.Children.Add(circle2);
             StartRotationAnimation(circle2);
-            StartOrbitAnimation(circle2, x, y, radius1, radius2);
+            StartOrbitAnimation(circle2, xCenter, yCenter, radius1, radius2);
         }
 
-        private Canvas DrawCircle(int x, int y, int radius)
+        private Canvas DrawCircle(int xCenter, int yCenter, int radius)
         {
             Canvas groupCanvas = new Canvas();
 
@@ -36,8 +36,8 @@ namespace AnimateRollingCircles
             groupCanvas.Children.Add(DrawLine(0, radius, radius * 2, radius));
             groupCanvas.Children.Add(DrawLine(radius, 0, radius, radius * 2));
 
-            Canvas.SetLeft(groupCanvas, x - radius);
-            Canvas.SetTop(groupCanvas, y - radius);
+            Canvas.SetLeft(groupCanvas, xCenter - radius);
+            Canvas.SetTop(groupCanvas, yCenter - radius);
 
             groupCanvas.RenderTransform = new RotateTransform(0, radius, radius);
 
@@ -107,7 +107,7 @@ namespace AnimateRollingCircles
             storyboard.Begin();
         }
 
-        private void StartOrbitAnimation(UIElement element, int centerX, int centerY, int radius1, int radius2)
+        private void StartOrbitAnimation(UIElement element, int xCenter, int yCenter, int radius1, int radius2)
         {
             int orbitRadius = radius1 + radius2;
             double angle = 0;
@@ -122,8 +122,8 @@ namespace AnimateRollingCircles
                 if (angle >= 360) angle = 0;
 
                 double radians = angle * Math.PI / 180;
-                double newX = centerX + orbitRadius * Math.Cos(radians) - radius2;
-                double newY = centerY + orbitRadius * Math.Sin(radians) - radius2;
+                double newX = xCenter + orbitRadius * Math.Cos(radians) - radius2;
+                double newY = yCenter + orbitRadius * Math.Sin(radians) - radius2;
 
                 Canvas.SetLeft(element, newX);
                 Canvas.SetTop(element, newY);
