@@ -99,7 +99,7 @@ namespace AnimateRollingCircles
             AnimateRollingCircles(x, y, radius1, radius2);
         }
 
-        private void StartOrbitAnimation(UIElement element, int xCenter, int yCenter, int radius1, int radius2)
+        private void StartOrbitAnimation(UIElement circle, int xCenter, int yCenter, int radius1, int radius2)
         {
             int orbitRadius = radius1 + radius2;
 
@@ -122,22 +122,22 @@ namespace AnimateRollingCircles
             orbitStoryboard.Children.Add(animationX);
             orbitStoryboard.Children.Add(animationY);
 
-            Storyboard.SetTarget(animationX, element);
-            Storyboard.SetTarget(animationY, element);
+            Storyboard.SetTarget(animationX, circle);
+            Storyboard.SetTarget(animationY, circle);
             Storyboard.SetTargetProperty(animationX, new PropertyPath("(Canvas.Left)"));
             Storyboard.SetTargetProperty(animationY, new PropertyPath("(Canvas.Top)"));
 
             orbitStoryboard.RepeatBehavior = RepeatBehavior.Forever;
             orbitStoryboard.Begin();
 
-            StartRotationAnimation(element, orbitDuration, radius1, radius2);
+            StartRotationAnimation(circle, orbitDuration, radius1, radius2);
         }
 
-        private void StartRotationAnimation(UIElement element, double orbitDuration, int radius1, int radius2)
+        private void StartRotationAnimation(UIElement circle, double orbitDuration, int radius1, int radius2)
         {
             Storyboard rotationStoryboard = new Storyboard();
 
-            double rotations = radius1 / (double)radius2;
+            double rotations = (radius1 + radius2) / (double)radius2;
 
             DoubleAnimation rotationAnimation = new DoubleAnimation
             {
@@ -148,7 +148,7 @@ namespace AnimateRollingCircles
             };
 
             rotationStoryboard.Children.Add(rotationAnimation);
-            Storyboard.SetTarget(rotationAnimation, element);
+            Storyboard.SetTarget(rotationAnimation, circle);
             Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
 
             rotationStoryboard.Begin();
