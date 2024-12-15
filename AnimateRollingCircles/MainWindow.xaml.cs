@@ -24,7 +24,6 @@ namespace AnimateRollingCircles
             Canvas circle2 = DrawCircle(xCenter + radius1 + radius2, yCenter, radius2);
             animateRollingCirclesCanvas.Children.Add(circle1);
             animateRollingCirclesCanvas.Children.Add(circle2);
-            StartRotationAnimation(circle2);
             StartOrbitAnimation(circle2, xCenter, yCenter, radius1, radius2);
         }
 
@@ -100,35 +99,59 @@ namespace AnimateRollingCircles
             AnimateRollingCircles(x, y, radius1, radius2);
         }
 
-        private void StartRotationAnimation(UIElement element)
-        {
-            Storyboard storyboard = (Storyboard)FindResource("RotateAnimation");
-            Storyboard.SetTarget(storyboard, element);
-            storyboard.Begin();
-        }
-
         private void StartOrbitAnimation(UIElement element, int xCenter, int yCenter, int radius1, int radius2)
         {
             int orbitRadius = radius1 + radius2;
-            double angle = 0;
 
-            DispatcherTimer timer = new DispatcherTimer
+            double orbitDuration = 4000;
+
+            DoubleAnimationUsingKeyFrames animationX = new DoubleAnimationUsingKeyFrames();
+            DoubleAnimationUsingKeyFrames animationY = new DoubleAnimationUsingKeyFrames();
+
+            for (int i = 0; i <= 360; i++)
             {
-                Interval = TimeSpan.FromMilliseconds(40)
-            };
-            timer.Tick += (s, e) =>
+                double angleInRadians = i * Math.PI / 180;
+                double offsetX = orbitRadius * Math.Cos(angleInRadians) - radius2;
+                double offsetY = orbitRadius * Math.Sin(angleInRadians) - radius2;
+
+                animationX.KeyFrames.Add(new EasingDoubleKeyFrame(xCenter + offsetX, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * orbitDuration / 360))));
+                animationY.KeyFrames.Add(new EasingDoubleKeyFrame(yCenter + offsetY, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * orbitDuration / 360))));
+            }
+
+            Storyboard orbitStoryboard = new Storyboard();
+            orbitStoryboard.Children.Add(animationX);
+            orbitStoryboard.Children.Add(animationY);
+
+            Storyboard.SetTarget(animationX, element);
+            Storyboard.SetTarget(animationY, element);
+            Storyboard.SetTargetProperty(animationX, new PropertyPath("(Canvas.Left)"));
+            Storyboard.SetTargetProperty(animationY, new PropertyPath("(Canvas.Top)"));
+
+            orbitStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+            orbitStoryboard.Begin();
+
+            StartRotationAnimation(element, orbitDuration, radius1, radius2);
+        }
+
+        private void StartRotationAnimation(UIElement element, double orbitDuration, int radius1, int radius2)
+        {
+            Storyboard rotationStoryboard = new Storyboard();
+
+            double rotations = radius1 / (double)radius2;
+
+            DoubleAnimation rotationAnimation = new DoubleAnimation
             {
-                angle += 1.7;
-                if (angle >= 360) angle = 0;
-
-                double radians = angle * Math.PI / 180;
-                double newX = xCenter + orbitRadius * Math.Cos(radians) - radius2;
-                double newY = yCenter + orbitRadius * Math.Sin(radians) - radius2;
-
-                Canvas.SetLeft(element, newX);
-                Canvas.SetTop(element, newY);
+                From = 0,
+                To = 360 * rotations,
+                Duration = TimeSpan.FromMilliseconds(orbitDuration),
+                RepeatBehavior = RepeatBehavior.Forever
             };
-            timer.Start();
+
+            rotationStoryboard.Children.Add(rotationAnimation);
+            Storyboard.SetTarget(rotationAnimation, element);
+            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+
+            rotationStoryboard.Begin();
         }
     }
 }
