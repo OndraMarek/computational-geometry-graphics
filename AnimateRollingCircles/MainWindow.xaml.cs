@@ -5,7 +5,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace AnimateRollingCircles
 {
@@ -102,30 +101,15 @@ namespace AnimateRollingCircles
         private void StartOrbitAnimation(UIElement circle, int xCenter, int yCenter, int radius1, int radius2)
         {
             int orbitRadius = radius1 + radius2;
-
             double orbitDuration = 4000;
 
-            DoubleAnimationUsingKeyFrames animationX = new DoubleAnimationUsingKeyFrames();
-            DoubleAnimationUsingKeyFrames animationY = new DoubleAnimationUsingKeyFrames();
-
-            for (int i = 0; i <= 360; i++)
-            {
-                double angleInRadians = i * Math.PI / 180;
-                double offsetX = orbitRadius * Math.Cos(angleInRadians) - radius2;
-                double offsetY = orbitRadius * Math.Sin(angleInRadians) - radius2;
-
-                animationX.KeyFrames.Add(new EasingDoubleKeyFrame(xCenter + offsetX, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * orbitDuration / 360))));
-                animationY.KeyFrames.Add(new EasingDoubleKeyFrame(yCenter + offsetY, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * orbitDuration / 360))));
-            }
+            DoubleAnimationUsingKeyFrames animationX = CreateOrbitAnimation(xCenter, orbitRadius, radius2, orbitDuration, true);
+            DoubleAnimationUsingKeyFrames animationY = CreateOrbitAnimation(yCenter, orbitRadius, radius2, orbitDuration, false);
 
             Storyboard orbitStoryboard = new Storyboard();
-            orbitStoryboard.Children.Add(animationX);
-            orbitStoryboard.Children.Add(animationY);
 
-            Storyboard.SetTarget(animationX, circle);
-            Storyboard.SetTarget(animationY, circle);
-            Storyboard.SetTargetProperty(animationX, new PropertyPath("(Canvas.Left)"));
-            Storyboard.SetTargetProperty(animationY, new PropertyPath("(Canvas.Top)"));
+            SetupStoryboard(orbitStoryboard, circle, animationX, "(Canvas.Left)");
+            SetupStoryboard(orbitStoryboard, circle, animationY, "(Canvas.Top)");
 
             orbitStoryboard.RepeatBehavior = RepeatBehavior.Forever;
             orbitStoryboard.Begin();
@@ -136,8 +120,7 @@ namespace AnimateRollingCircles
         private void StartRotationAnimation(UIElement circle, double orbitDuration, int radius1, int radius2)
         {
             Storyboard rotationStoryboard = new Storyboard();
-
-            double rotations = (radius1 + radius2) / (double)radius2;
+            double rotations = (radius1 + radius2) / radius2;
 
             DoubleAnimation rotationAnimation = new DoubleAnimation
             {
@@ -147,11 +130,28 @@ namespace AnimateRollingCircles
                 RepeatBehavior = RepeatBehavior.Forever
             };
 
-            rotationStoryboard.Children.Add(rotationAnimation);
-            Storyboard.SetTarget(rotationAnimation, circle);
-            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+            SetupStoryboard(rotationStoryboard, circle, rotationAnimation, "(UIElement.RenderTransform).(RotateTransform.Angle)");;
 
             rotationStoryboard.Begin();
+        }
+
+        private DoubleAnimationUsingKeyFrames CreateOrbitAnimation(int center, int orbitRadius, int radius2, double duration, bool isX)
+        {
+            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames();
+            for (int i = 0; i <= 360; i++)
+            {
+                double angleInRadians = i * Math.PI / 180;
+                double offset = orbitRadius * (isX ? Math.Cos(angleInRadians) : Math.Sin(angleInRadians)) - radius2;
+                animation.KeyFrames.Add(new EasingDoubleKeyFrame(center + offset, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * duration / 360))));
+            }
+            return animation;
+        }
+
+        private void SetupStoryboard(Storyboard storyboard, UIElement target, DoubleAnimationBase animation, string targetProperty)
+        {
+            storyboard.Children.Add(animation);
+            Storyboard.SetTarget(animation, target);
+            Storyboard.SetTargetProperty(animation, new PropertyPath(targetProperty));
         }
     }
 }
