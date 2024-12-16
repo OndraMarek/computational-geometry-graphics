@@ -19,11 +19,14 @@ namespace AnimateRollingCircles
         public void AnimateRollingCircles(int xCenter, int yCenter, int radius1, int radius2)
         {
             ConvertCoordinates(ref xCenter, ref yCenter);
+
             Canvas circle1 = DrawCircle(xCenter, yCenter, radius1);
             Canvas circle2 = DrawCircle(xCenter + radius1 + radius2, yCenter, radius2);
+
             animateRollingCirclesCanvas.Children.Add(circle1);
             animateRollingCirclesCanvas.Children.Add(circle2);
-            StartOrbitAnimation(circle2, xCenter, yCenter, radius1, radius2);
+
+            StartRollingAnimation(circle2, xCenter, yCenter, radius1, radius2);
         }
 
         private Canvas DrawCircle(int xCenter, int yCenter, int radius)
@@ -98,10 +101,10 @@ namespace AnimateRollingCircles
             AnimateRollingCircles(x, y, radius1, radius2);
         }
 
-        private void StartOrbitAnimation(UIElement circle, int xCenter, int yCenter, int radius1, int radius2)
+        private void StartRollingAnimation(UIElement circle, int xCenter, int yCenter, int radius1, int radius2)
         {
             int orbitRadius = radius1 + radius2;
-            double orbitDuration = 4000;
+            double orbitDuration = 5000;
 
             DoubleAnimationUsingKeyFrames animationX = CreateOrbitAnimation(xCenter, orbitRadius, radius2, orbitDuration, true);
             DoubleAnimationUsingKeyFrames animationY = CreateOrbitAnimation(yCenter, orbitRadius, radius2, orbitDuration, false);
@@ -111,7 +114,6 @@ namespace AnimateRollingCircles
             SetupStoryboard(orbitStoryboard, circle, animationX, "(Canvas.Left)");
             SetupStoryboard(orbitStoryboard, circle, animationY, "(Canvas.Top)");
 
-            orbitStoryboard.RepeatBehavior = RepeatBehavior.Forever;
             orbitStoryboard.Begin();
 
             StartRotationAnimation(circle, orbitDuration, radius1, radius2);
@@ -119,7 +121,6 @@ namespace AnimateRollingCircles
 
         private void StartRotationAnimation(UIElement circle, double orbitDuration, int radius1, int radius2)
         {
-            Storyboard rotationStoryboard = new Storyboard();
             double rotations = (radius1 + radius2) / radius2;
 
             DoubleAnimation rotationAnimation = new DoubleAnimation
@@ -130,6 +131,8 @@ namespace AnimateRollingCircles
                 RepeatBehavior = RepeatBehavior.Forever
             };
 
+            Storyboard rotationStoryboard = new Storyboard();
+            
             SetupStoryboard(rotationStoryboard, circle, rotationAnimation, "(UIElement.RenderTransform).(RotateTransform.Angle)");;
 
             rotationStoryboard.Begin();
@@ -137,12 +140,19 @@ namespace AnimateRollingCircles
 
         private DoubleAnimationUsingKeyFrames CreateOrbitAnimation(int center, int orbitRadius, int radius2, double duration, bool isX)
         {
-            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames();
+            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames{
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+
             for (int i = 0; i <= 360; i++)
             {
                 double angleInRadians = i * Math.PI / 180;
                 double offset = orbitRadius * (isX ? Math.Cos(angleInRadians) : Math.Sin(angleInRadians)) - radius2;
-                animation.KeyFrames.Add(new EasingDoubleKeyFrame(center + offset, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * duration / 360))));
+                animation.KeyFrames.Add(
+                    new EasingDoubleKeyFrame(
+                        center + offset, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * duration / 360))
+                        )
+                    );
             }
             return animation;
         }
