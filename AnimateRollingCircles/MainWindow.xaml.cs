@@ -10,7 +10,6 @@ namespace AnimateRollingCircles
 {
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
@@ -40,28 +39,23 @@ namespace AnimateRollingCircles
             Canvas.SetLeft(groupCanvas, xCenter - radius);
             Canvas.SetTop(groupCanvas, yCenter - radius);
 
-            groupCanvas.RenderTransform = new RotateTransform(0, radius, radius);
-
             return groupCanvas;
         }
 
         private Ellipse DrawEllipse(int radius)
         {
-            Ellipse ellipse = new Ellipse
+            return new Ellipse
             {
                 Width = radius * 2,
                 Height = radius * 2,
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
-            Canvas.SetLeft(ellipse, 0);
-            Canvas.SetTop(ellipse, 0);
-            return ellipse;
         }
 
         private Line DrawLine(int x1, int y1, int x2, int y2)
         {
-            Line line = new Line
+            return new Line
             {
                 X1 = x1,
                 Y1 = y1,
@@ -70,7 +64,6 @@ namespace AnimateRollingCircles
                 Stroke = Brushes.Black,
                 StrokeThickness = 1
             };
-            return line;
         }
 
         private void ConvertCoordinates(ref int x, ref int y)
@@ -94,10 +87,10 @@ namespace AnimateRollingCircles
         private void animateRollingCirclesButton_Click(object sender, RoutedEventArgs e)
         {
             ClearCanvas();
-            int x = xTextBox.Text != "" ? int.Parse(xTextBox.Text) : 0;
-            int y = yTextBox.Text != "" ? int.Parse(yTextBox.Text) : 0;
-            int radius1 = radius1TextBox.Text != "" ? int.Parse(radius1TextBox.Text) : 0;
-            int radius2 = radius2TextBox.Text != "" ? int.Parse(radius2TextBox.Text) : 0;
+            int x = string.IsNullOrEmpty(xTextBox.Text) ? 0 : int.Parse(xTextBox.Text);
+            int y = string.IsNullOrEmpty(yTextBox.Text) ? 0 : int.Parse(yTextBox.Text);
+            int radius1 = string.IsNullOrEmpty(radius1TextBox.Text) ? 0 : int.Parse(radius1TextBox.Text);
+            int radius2 = string.IsNullOrEmpty(radius2TextBox.Text) ? 0 : int.Parse(radius2TextBox.Text);
             AnimateRollingCircles(x, y, radius1, radius2);
         }
 
@@ -110,7 +103,6 @@ namespace AnimateRollingCircles
             DoubleAnimationUsingKeyFrames animationY = CreateOrbitAnimation(yCenter, orbitRadius, radius2, orbitDuration, false);
 
             Storyboard orbitStoryboard = new Storyboard();
-
             SetupStoryboard(orbitStoryboard, circle, animationX, "(Canvas.Left)");
             SetupStoryboard(orbitStoryboard, circle, animationY, "(Canvas.Top)");
 
@@ -121,6 +113,8 @@ namespace AnimateRollingCircles
 
         private void StartRotationAnimation(UIElement circle, double orbitDuration, int radius1, int radius2)
         {
+            circle.RenderTransform = new RotateTransform(0, radius2, radius2);
+
             double rotations = (radius1 + radius2) / radius2;
 
             DoubleAnimation rotationAnimation = new DoubleAnimation
@@ -132,15 +126,15 @@ namespace AnimateRollingCircles
             };
 
             Storyboard rotationStoryboard = new Storyboard();
-            
-            SetupStoryboard(rotationStoryboard, circle, rotationAnimation, "(UIElement.RenderTransform).(RotateTransform.Angle)");;
+            SetupStoryboard(rotationStoryboard, circle, rotationAnimation, "(UIElement.RenderTransform).(RotateTransform.Angle)");
 
             rotationStoryboard.Begin();
         }
 
         private DoubleAnimationUsingKeyFrames CreateOrbitAnimation(int center, int orbitRadius, int radius2, double duration, bool isX)
         {
-            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames{
+            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames
+            {
                 RepeatBehavior = RepeatBehavior.Forever
             };
 
