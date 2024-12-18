@@ -101,7 +101,7 @@ namespace AnimateRollingCircles
 
         private void SetDefaultValues(TextBox textBox, string defaultValue)
         {
-            if (string.IsNullOrEmpty(textBox.Text))
+            if (string.IsNullOrEmpty(textBox.Text) || !int.TryParse(textBox.Text, out _))
             {
                 textBox.Text = defaultValue;
             }
