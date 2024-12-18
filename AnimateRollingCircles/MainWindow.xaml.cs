@@ -86,12 +86,25 @@ namespace AnimateRollingCircles
 
         private void animateRollingCirclesButton_Click(object sender, RoutedEventArgs e)
         {
+            SetDefaultValues(xTextBox, "0");
+            SetDefaultValues(yTextBox, "0");
+            SetDefaultValues(radius1TextBox, "50");
+            SetDefaultValues(radius2TextBox, "50");
+
             ClearCanvas();
-            int x = string.IsNullOrEmpty(xTextBox.Text) ? 0 : int.Parse(xTextBox.Text);
-            int y = string.IsNullOrEmpty(yTextBox.Text) ? 0 : int.Parse(yTextBox.Text);
-            int radius1 = string.IsNullOrEmpty(radius1TextBox.Text) ? 0 : int.Parse(radius1TextBox.Text);
-            int radius2 = string.IsNullOrEmpty(radius2TextBox.Text) ? 0 : int.Parse(radius2TextBox.Text);
+            int x = int.Parse(xTextBox.Text);
+            int y = int.Parse(yTextBox.Text);
+            int radius1 = int.Parse(radius1TextBox.Text);
+            int radius2 = int.Parse(radius2TextBox.Text);
             AnimateRollingCircles(x, y, radius1, radius2);
+        }
+
+        private void SetDefaultValues(TextBox textBox, string defaultValue)
+        {
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                textBox.Text = defaultValue;
+            }
         }
 
         private void StartRollingAnimation(UIElement circle, int xCenter, int yCenter, int radius1, int radius2)
