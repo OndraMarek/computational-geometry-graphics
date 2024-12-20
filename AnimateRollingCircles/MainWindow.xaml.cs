@@ -11,6 +11,7 @@ namespace AnimateRollingCircles
     public partial class MainWindow : Window
     {
         private double angle = 0;
+        private double totalDistance = 0;
         private DispatcherTimer timer;
 
         public MainWindow()
@@ -89,12 +90,16 @@ namespace AnimateRollingCircles
 
         private void animateRollingCirclesButton_Click(object sender, RoutedEventArgs e)
         {
+            ResetAnimation();
+
             SetDefaultValues(xTextBox, "0");
             SetDefaultValues(yTextBox, "0");
             SetDefaultValues(radius1TextBox, "50");
             SetDefaultValues(radius2TextBox, "50");
 
             ClearCanvas();
+            
+
             int x = int.Parse(xTextBox.Text);
             int y = int.Parse(yTextBox.Text);
             int radius1 = int.Parse(radius1TextBox.Text);
@@ -119,32 +124,39 @@ namespace AnimateRollingCircles
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(16);
-            timer.Tick += (sender, e) => Timer_Tick(sender, e, circle2, xCenter, yCenter, radius1, radius2);
+            timer.Tick += (sender, e) => AnimateCircle(circle2, xCenter, yCenter, radius1, radius2);
             timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e, Canvas circle2, int xCenter, int yCenter, int radius1, int radius2)
+        private void AnimateCircle(Canvas circle2, int xCenter, int yCenter, int radius1, int radius2)
         {
+            double previousAngle = angle;
             angle = (angle + 2) % 360;
 
             double radians = angle * Math.PI / 180;
             double orbitRadius = radius1 + radius2;
+
             double x = xCenter + orbitRadius * Math.Cos(radians) - radius2;
             double y = yCenter + orbitRadius * Math.Sin(radians) - radius2;
 
             Canvas.SetLeft(circle2, x);
             Canvas.SetTop(circle2, y);
 
-            double rotationAngle = CalculateRotationAngle(orbitRadius, radians, radius2);
+            double incrementalDistance = orbitRadius * (angle - previousAngle) * Math.PI / 180;
+            if (incrementalDistance < 0) incrementalDistance += 2 * Math.PI * orbitRadius;
+
+            totalDistance += incrementalDistance;
+
+            double rotationAngle = CalculateRotationAngle(totalDistance, radius2);
 
             ApplyRotation(circle2, rotationAngle, radius2);
         }
 
-        private double CalculateRotationAngle(double orbitRadius, double radians, int radius2)
+
+        private double CalculateRotationAngle(double totalDistance, int radius2)
         {
             double circumference = 2 * Math.PI * radius2;
-            double distance = orbitRadius * radians;
-            return (distance / circumference) * 360;
+            return (totalDistance / circumference) * 360;
         }
 
         private void ApplyRotation(Canvas circle2, double rotationAngle, int radius2)
@@ -152,5 +164,17 @@ namespace AnimateRollingCircles
             RotateTransform rotateTransform = new RotateTransform(rotationAngle, radius2, radius2);
             circle2.RenderTransform = rotateTransform;
         }
+        private void ResetAnimation()
+        {
+            if (timer != null)
+            {
+                timer.Stop();
+                timer = null;
+            }
+
+            angle = 0;
+            totalDistance = 0;
+        }
+
     }
 }
