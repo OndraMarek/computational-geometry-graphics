@@ -12,7 +12,7 @@ namespace AnimateRollingCircles
     {
         private double angle = 0;
         private double totalDistance = 0;
-        private DispatcherTimer timer;
+        private DispatcherTimer? timer;
 
         public MainWindow()
         {
