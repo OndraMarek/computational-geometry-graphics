@@ -99,11 +99,10 @@ namespace AnimateRollingCircles
 
             ClearCanvas();
             
-
             int x = int.Parse(xTextBox.Text);
             int y = int.Parse(yTextBox.Text);
-            int radius1 = int.Parse(radius1TextBox.Text);
-            int radius2 = int.Parse(radius2TextBox.Text);
+            int radius1 = Math.Abs(int.Parse(radius1TextBox.Text));
+            int radius2 = Math.Abs(int.Parse(radius2TextBox.Text));
             AnimateRollingCircles(x, y, radius1, radius2);
         }
 
@@ -142,20 +141,19 @@ namespace AnimateRollingCircles
             Canvas.SetLeft(circle2, x);
             Canvas.SetTop(circle2, y);
 
-            double incrementalDistance = orbitRadius * (angle - previousAngle) * Math.PI / 180;
-            if (incrementalDistance < 0) incrementalDistance += 2 * Math.PI * orbitRadius;
-
-            totalDistance += incrementalDistance;
-
-            double rotationAngle = CalculateRotationAngle(totalDistance, radius2);
+            double rotationAngle = CalculateRotationAngle(ref totalDistance, orbitRadius, previousAngle, angle, radius2);
 
             ApplyRotation(circle2, rotationAngle, radius2);
         }
 
-
-        private double CalculateRotationAngle(double totalDistance, int radius2)
+        private double CalculateRotationAngle(ref double totalDistance, double orbitRadius, double previousAngle, double currentAngle, int radius2)
         {
+            double incrementalDistance = orbitRadius * (currentAngle - previousAngle) * Math.PI / 180;
+            if (incrementalDistance < 0) incrementalDistance += 2 * Math.PI * orbitRadius;
+
+            totalDistance += incrementalDistance;
             double circumference = 2 * Math.PI * radius2;
+
             return (totalDistance / circumference) * 360;
         }
 
