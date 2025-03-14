@@ -7,32 +7,40 @@ namespace RayBoxIntersection
 {
     public partial class MainWindow : Window
     {
+        private int[] b;
+        private int[] v;
+
+        private int[] a;
+        private int[] q;
+
         public MainWindow()
         {
-            int[] b = [0, 0, 0];
-            int[] v = [50, 100, 150];
+            b = [ 0, 0, 0 ];
+            v = [50, 100, 150];
 
+            a = [-60, -60, -60];
+            q = [-1, -1, -1];
 
             InitializeComponent();
 
-            DrawCube(b[0], b[1], b[2], v[0], v[1], v[2]);
-            SetupCamera(b[0], b[1], b[2], v[0], v[1], v[2]);
+            DrawCube();
+            SetupCamera();
         }
 
-        private void DrawCube(int posX, int posY, int posZ, int width, int length, int height)
+        private void DrawCube()
         {
             var lines = new LinesVisual3D { Color = Colors.Blue, Thickness = 2 };
 
             Point3D[] vertices =
             [
-                new Point3D(posX, posY, posZ),
-                new Point3D(posX + width, posY, posZ),
-                new Point3D(posX + width, posY + length, posZ),
-                new Point3D(posX, posY + length, posZ),
-                new Point3D(posX, posY, posZ + height),
-                new Point3D(posX + width, posY, posZ + height),
-                new Point3D(posX + width, posY + length, posZ + height),
-                new Point3D(posX, posY + length, posZ + height)
+                new Point3D(b[0], b[1], b[2]),
+                new Point3D(b[0] + v[0], b[1], b[2]),
+                new Point3D(b[0] + v[0], b[1] + v[1], b[2]),
+                new Point3D(b[0], b[1] + v[1], b[2]),
+                new Point3D(b[0], b[1], b[2] + v[2]),
+                new Point3D(b[0] + v[0], b[1], b[2] + v[2]),
+                new Point3D(b[0] + v[0], b[1] + v[1], b[2] + v[2]),
+                new Point3D(b[0], b[1] + v[1], b[2] + v[2])
             ];
 
             int[,] edges = new int[,]
@@ -51,15 +59,15 @@ namespace RayBoxIntersection
             viewport.Children.Add(lines);
         }
 
-        private void SetupCamera(int posX, int posY, int posZ, int width, int length, int height)
+        private void SetupCamera()
         {
             Point3D center = new Point3D(
-                posX + width / 2.0,
-                posY + length / 2.0,
-                posZ + height / 2.0
+                b[0] + v[0] / 2.0,
+                b[1] + v[1] / 2.0,
+                b[2] + v[2] / 2.0
             );
 
-            double maxDimension = Math.Max(Math.Max(width, length), height);
+            double maxDimension = Math.Max(Math.Max(v[0], v[1]), v[2]);
             double cameraDistance = maxDimension * 2;
 
             Point3D cameraPosition = new Point3D(
@@ -81,6 +89,17 @@ namespace RayBoxIntersection
             };
 
             viewport.Camera = camera;
+        }
+
+        private bool RayIntersectsCuboid()
+        {
+            return true;
+        }
+
+        private void testIntersection_Click(object sender, RoutedEventArgs e)
+        {
+            bool intersects = RayIntersectsCuboid();
+            MessageBox.Show($"Ray intersects cuboid: {intersects}", "Intersection Test");
         }
     }
 }

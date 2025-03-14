@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Passage of a ray through a block" Height="700" Width="800">
     <Grid>
+        <Button x:Name="testIntersection" Content="Test Intersection" HorizontalAlignment="Center" Margin="0,35,0,0" VerticalAlignment="Top" Width="104" Click="testIntersection_Click"/>
         <Viewport3D Name="viewport" Height="600" Width="800" Margin="0,84,0,0">
             <ModelVisual3D>
                 <ModelVisual3D.Content>
