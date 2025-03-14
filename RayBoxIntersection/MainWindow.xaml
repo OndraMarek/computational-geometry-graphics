@@ -1,0 +1,12 @@
+﻿<Window x:Class="RayBoxIntersection.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RayBoxIntersection"
+        mc:Ignorable="d"
+        Title="Passage of a ray through a block" Height="700" Width="800">
+    <Grid>
+        <Canvas x:Name="drawCanvas" Width="800" Height="600" Background="White" VerticalAlignment="Top" Margin="0,84,0,0"  />
+    </Grid>
+</Window>
