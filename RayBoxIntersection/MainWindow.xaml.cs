@@ -12,11 +12,12 @@ namespace RayBoxIntersection
 
         private double[] a;
         private double[] q;
+        private Point3D? intersection;
 
         public MainWindow()
         {
             b = [ 0, 0, 0 ];
-            v = [50, 100, 150];
+            v = [50, 200, 150];
 
             a = [10, 50, 75];
             q = [1, 1, 1];
@@ -111,17 +112,39 @@ namespace RayBoxIntersection
 
                 if (tn > tf)
                 {
+                    intersection = null;
                     return false;
                 }
             }
 
-            return tn >= 0 && tf >= 0;
+            if(tn >= 0 && tf >= 0)
+            {
+                intersection = new Point3D(a[0] + tn * q[0], a[1] + tn * q[1], a[2] + tn * q[2]);
+                return true;
+            }
+            intersection = null;
+            return false;
         }
 
         private void testIntersection_Click(object sender, RoutedEventArgs e)
         {
             bool intersects = RayIntersectsCuboid();
             MessageBox.Show($"Ray intersects cuboid: {intersects}", "Intersection Test");
+
+            if (intersects)
+            {
+                if (intersection.HasValue)
+                {
+                    var redPoint = new PointsVisual3D
+                    {
+                        Color = Colors.Red,
+                        Size = 5,
+                        Points = new Point3DCollection { intersection.Value }
+                    };
+
+                    viewport.Children.Add(redPoint);
+                }
+            }
         }
     }
 }
