@@ -7,19 +7,19 @@ namespace RayBoxIntersection
 {
     public partial class MainWindow : Window
     {
-        private int[] b;
-        private int[] v;
+        private double[] b;
+        private double[] v;
 
-        private int[] a;
-        private int[] q;
+        private double[] a;
+        private double[] q;
 
         public MainWindow()
         {
             b = [ 0, 0, 0 ];
             v = [50, 100, 150];
 
-            a = [-60, -60, -60];
-            q = [-1, -1, -1];
+            a = [10, 50, 75];
+            q = [1, 1, 1];
 
             InitializeComponent();
 
@@ -93,7 +93,29 @@ namespace RayBoxIntersection
 
         private bool RayIntersectsCuboid()
         {
-            return true;
+            double tn = 0.0;
+            double tf = double.PositiveInfinity;
+
+            for (int i = 0; i < 3; i++)
+            {
+                double tni = (b[i] - a[i]) / q[i];
+                double tfi = (v[i] - a[i]) / q[i];
+
+                if (tni > tfi)
+                {
+                    (tni, tfi) = (tfi, tni);
+                }
+
+                tn = Math.Max(tn, tni);
+                tf = Math.Min(tf, tfi);
+
+                if (tn > tf)
+                {
+                    return false;
+                }
+            }
+
+            return tn >= 0 && tf >= 0;
         }
 
         private void testIntersection_Click(object sender, RoutedEventArgs e)
