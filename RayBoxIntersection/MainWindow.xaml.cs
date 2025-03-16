@@ -12,25 +12,25 @@ namespace RayBoxIntersection
 
         private double[] a;
         private double[] q;
+
         private Point3D? intersection;
+        private PointsVisual3D? lastIntersectionPoint;
 
         public MainWindow()
         {
             b = [ 0, 0, 0 ];
-            v = [50, 200, 150];
+            v = [0, 0, 0];
 
-            a = [10, 50, 75];
-            q = [1, 1, 1];
+            a = [0, 0, 0];
+            q = [0, 0, 0];
 
             InitializeComponent();
-
-            DrawCube();
-            SetupCamera();
         }
 
-        private void DrawCube()
+        private void DrawCuboid()
         {
-            var lines = new LinesVisual3D { Color = Colors.Blue, Thickness = 2 };
+            viewport.Children.Clear();
+            LinesVisual3D lines = new LinesVisual3D { Color = Colors.Black, Thickness = 1 };
 
             Point3D[] vertices =
             [
@@ -60,36 +60,24 @@ namespace RayBoxIntersection
             viewport.Children.Add(lines);
         }
 
-        private void SetupCamera()
+        private void DrawIntersectionPoint()
         {
-            Point3D center = new Point3D(
-                b[0] + v[0] / 2.0,
-                b[1] + v[1] / 2.0,
-                b[2] + v[2] / 2.0
-            );
-
-            double maxDimension = Math.Max(Math.Max(v[0], v[1]), v[2]);
-            double cameraDistance = maxDimension * 2;
-
-            Point3D cameraPosition = new Point3D(
-                center.X + cameraDistance,
-                center.Y + cameraDistance,
-                center.Z + cameraDistance
-            );
-
-            PerspectiveCamera camera = new PerspectiveCamera
+            if (intersection.HasValue)
             {
-                Position = cameraPosition,
-                LookDirection = new Vector3D(
-                    center.X - cameraPosition.X,
-                    center.Y - cameraPosition.Y,
-                    center.Z - cameraPosition.Z
-                ),
-                UpDirection = new Vector3D(0, 1, 0),
-                FieldOfView = 60
-            };
+                if (lastIntersectionPoint != null)
+                {
+                    viewport.Children.Remove(lastIntersectionPoint);
+                }
+                var redPoint = new PointsVisual3D
+                {
+                    Color = Colors.Red,
+                    Size = 5,
+                    Points = new Point3DCollection { intersection.Value }
+                };
 
-            viewport.Camera = camera;
+                viewport.Children.Add(redPoint);
+                lastIntersectionPoint = redPoint;
+            }
         }
 
         private bool RayIntersectsCuboid()
@@ -117,7 +105,7 @@ namespace RayBoxIntersection
                 }
             }
 
-            if(tn >= 0 && tf >= 0)
+            if (tn >= 0 && tf >= 0)
             {
                 intersection = new Point3D(a[0] + tn * q[0], a[1] + tn * q[1], a[2] + tn * q[2]);
                 return true;
@@ -128,23 +116,40 @@ namespace RayBoxIntersection
 
         private void testIntersection_Click(object sender, RoutedEventArgs e)
         {
-            bool intersects = RayIntersectsCuboid();
-            MessageBox.Show($"Ray intersects cuboid: {intersects}", "Intersection Test");
+            a = [double.Parse(rayA0.Text), double.Parse(rayA1.Text), double.Parse(rayA2.Text)];
+            q = [double.Parse(rayQ0.Text), double.Parse(rayQ1.Text), double.Parse(rayQ2.Text)];
 
+            bool intersects = RayIntersectsCuboid();
             if (intersects)
             {
-                if (intersection.HasValue)
-                {
-                    var redPoint = new PointsVisual3D
-                    {
-                        Color = Colors.Red,
-                        Size = 5,
-                        Points = new Point3DCollection { intersection.Value }
-                    };
-
-                    viewport.Children.Add(redPoint);
-                }
+                DrawIntersectionPoint();
+                MessageBox.Show($"Ray intersects cuboid (detected intersection market by red dot)", "Intersection Test");
             }
+            else 
+            {
+                MessageBox.Show("Ray does not intersect cuboid", "Intersection Test");
+            }
+        }
+
+        private void drawCuboidButton_Click(object sender, RoutedEventArgs e)
+        {
+            b = [ double.Parse(cuboidB0.Text), double.Parse(cuboidB0.Text), double.Parse(cuboidB0.Text) ];
+            v = [double.Parse(cuboidV0.Text), double.Parse(cuboidV1.Text), double.Parse(cuboidV2.Text)];
+
+            DrawCuboid();
+
+            Point3D center = new Point3D(b[0] + v[0] / 2, b[1] + v[1] / 2, b[2] + v[2] / 2);
+            double distance = Math.Max(v[0], Math.Max(v[1], v[2])) * 5;
+            Point3D cameraPosition = new Point3D(center.X + distance, center.Y + distance, center.Z + distance);
+
+            viewport.Camera.Position = cameraPosition;
+            viewport.Camera.LookDirection = new Vector3D(center.X - cameraPosition.X, center.Y - cameraPosition.Y, center.Z - cameraPosition.Z);
+            viewport.Camera.UpDirection = new Vector3D(0, 0, 1);
+        }
+
+        private void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

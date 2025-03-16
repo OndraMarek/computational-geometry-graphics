@@ -3,18 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        
+        xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:local="clr-namespace:RayBoxIntersection"
         mc:Ignorable="d"
-        Title="Passage of a ray through a block" Height="700" Width="800">
-    <Grid>
-        <Button x:Name="testIntersection" Content="Test Intersection" HorizontalAlignment="Center" Margin="0,35,0,0" VerticalAlignment="Top" Width="104" Click="testIntersection_Click"/>
-        <Viewport3D Name="viewport" Height="600" Width="800" Margin="0,84,0,0">
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <DirectionalLight Color="White" Direction="-1,-1,-2"/>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-        </Viewport3D>
+        Title="Passage of a ray through a block" Height="563" Width="737">
+    <Grid Height="552" VerticalAlignment="Top">
+        <Button x:Name="drawIntersectionPoint" Content="Test Intersection" HorizontalAlignment="Left" Margin="536,50,0,0" VerticalAlignment="Top" Width="104" Click="testIntersection_Click"/>
+        <helix:HelixViewport3D x:Name="viewport" ShowCoordinateSystem="True" ShowViewCube="True" ZoomExtentsWhenLoaded="True" Margin="0,124,0,0">
+            <helix:DefaultLights/>
+        </helix:HelixViewport3D>
+        <TextBox x:Name="cuboidB0" HorizontalAlignment="Left" Margin="26,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="cuboidB1" HorizontalAlignment="Left" Margin="80,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="cuboidB2" HorizontalAlignment="Left" Margin="134,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="cuboidV0" HorizontalAlignment="Left" Margin="26,73,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="cuboidV1" HorizontalAlignment="Left" Margin="80,73,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="cuboidV2" HorizontalAlignment="Left" Margin="134,73,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayA0" HorizontalAlignment="Left" Margin="344,29,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayA1" HorizontalAlignment="Left" Margin="398,29,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayA2" HorizontalAlignment="Left" Margin="452,29,0,0" TextWrapping="Wrap" Text="75" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayQ0" HorizontalAlignment="Left" Margin="344,73,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayQ1" HorizontalAlignment="Left" Margin="398,73,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="49"/>
+        <TextBox x:Name="rayQ2" HorizontalAlignment="Left" Margin="452,73,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="drawCuboidButton" Content="Draw Cuboid" HorizontalAlignment="Left" Margin="206,50,0,0" VerticalAlignment="Top" Width="104" Click="drawCuboidButton_Click"/>
+        <Label Content="Cuboid b params" HorizontalAlignment="Left" Margin="26,3,0,0" VerticalAlignment="Top" Height="26" Width="118"/>
+        <Label Content="Cuboid q params" HorizontalAlignment="Left" Margin="26,47,0,0" VerticalAlignment="Top" Height="26" Width="118"/>
+        <Label Content="Ray a params" HorizontalAlignment="Left" Margin="344,3,0,0" VerticalAlignment="Top" Height="26" Width="118"/>
+        <Label Content="Ray v params" HorizontalAlignment="Left" Margin="344,47,0,0" VerticalAlignment="Top" Height="26" Width="118"/>
+        <Button x:Name="exitButton" Content="Exit" HorizontalAlignment="Left" Margin="677,9,0,0" VerticalAlignment="Top" Width="50" Click="exitButton_Click"/>
     </Grid>
 </Window>
