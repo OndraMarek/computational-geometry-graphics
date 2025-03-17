@@ -3,15 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:local="clr-namespace:RayBoxIntersection"
         mc:Ignorable="d"
-        Title="Passage of a ray through a block" Height="563" Width="737">
-    <Grid Height="552" VerticalAlignment="Top">
+        Title="Passage of a ray through a block" Height="560" Width="750">
+    <Grid Height="500" Width="740" VerticalAlignment="Top">
         <Button x:Name="drawIntersectionPoint" Content="Test Intersection" HorizontalAlignment="Left" Margin="536,50,0,0" VerticalAlignment="Top" Width="104" Click="testIntersection_Click"/>
-        <helix:HelixViewport3D x:Name="viewport" ShowCoordinateSystem="True" ShowViewCube="True" ZoomExtentsWhenLoaded="True" Margin="0,124,0,0">
-            <helix:DefaultLights/>
-        </helix:HelixViewport3D>
+        <Viewport3D Name="viewport" Margin="0,84,0,-48">
+            <ModelVisual3D>
+                <ModelVisual3D.Content>
+                    <DirectionalLight Color="White" Direction="-1,-1,-2"/>
+                </ModelVisual3D.Content>
+            </ModelVisual3D>
+        </Viewport3D>
         <TextBox x:Name="cuboidB0" HorizontalAlignment="Left" Margin="26,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>
         <TextBox x:Name="cuboidB1" HorizontalAlignment="Left" Margin="80,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>
         <TextBox x:Name="cuboidB2" HorizontalAlignment="Left" Margin="134,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="49"/>

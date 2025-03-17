@@ -14,7 +14,7 @@ namespace RayBoxIntersection
         private double[] q;
 
         private Point3D? intersection;
-        private PointsVisual3D? lastIntersectionPoint;
+        private SphereVisual3D? lastIntersectionPoint;
 
         public MainWindow()
         {
@@ -25,11 +25,13 @@ namespace RayBoxIntersection
             q = [0, 0, 0];
 
             InitializeComponent();
+            viewport.Children.Add(new DefaultLights());
         }
 
         private void DrawCuboid()
         {
             viewport.Children.Clear();
+            viewport.Children.Add(new DefaultLights());
             LinesVisual3D lines = new LinesVisual3D { Color = Colors.Black, Thickness = 1 };
 
             Point3D[] vertices =
@@ -68,15 +70,16 @@ namespace RayBoxIntersection
                 {
                     viewport.Children.Remove(lastIntersectionPoint);
                 }
-                var redPoint = new PointsVisual3D
+
+                SphereVisual3D sphere = new SphereVisual3D
                 {
-                    Color = Colors.Red,
-                    Size = 5,
-                    Points = new Point3DCollection { intersection.Value }
+                    Center = intersection.Value,
+                    Radius = 0.02* Math.Max(v[0], Math.Max(v[1], v[2])),
+                    Material = Materials.Red
                 };
 
-                viewport.Children.Add(redPoint);
-                lastIntersectionPoint = redPoint;
+                viewport.Children.Add(sphere);
+                lastIntersectionPoint = sphere;
             }
         }
 
@@ -127,6 +130,11 @@ namespace RayBoxIntersection
             }
             else 
             {
+                if (lastIntersectionPoint != null)
+                {
+                    viewport.Children.Remove(lastIntersectionPoint);
+                    lastIntersectionPoint = null;
+                }
                 MessageBox.Show("Ray does not intersect cuboid", "Intersection Test");
             }
         }
@@ -137,19 +145,44 @@ namespace RayBoxIntersection
             v = [double.Parse(cuboidV0.Text), double.Parse(cuboidV1.Text), double.Parse(cuboidV2.Text)];
 
             DrawCuboid();
-
-            Point3D center = new Point3D(b[0] + v[0] / 2, b[1] + v[1] / 2, b[2] + v[2] / 2);
-            double distance = Math.Max(v[0], Math.Max(v[1], v[2])) * 5;
-            Point3D cameraPosition = new Point3D(center.X + distance, center.Y + distance, center.Z + distance);
-
-            viewport.Camera.Position = cameraPosition;
-            viewport.Camera.LookDirection = new Vector3D(center.X - cameraPosition.X, center.Y - cameraPosition.Y, center.Z - cameraPosition.Z);
-            viewport.Camera.UpDirection = new Vector3D(0, 0, 1);
+            SetupCamera();
         }
 
         private void exitButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void SetupCamera()
+        {
+            Point3D center = new Point3D(
+                b[0] + v[0] / 2.0,
+                b[1] + v[1] / 2.0,
+                b[2] + v[2] / 2.0
+            );
+
+            double maxDimension = Math.Max(Math.Max(v[0], v[1]), v[2]);
+            double cameraDistance = maxDimension * 2;
+
+            Point3D cameraPosition = new Point3D(
+                center.X + cameraDistance,
+                center.Y + cameraDistance,
+                center.Z + cameraDistance
+            );
+
+            PerspectiveCamera camera = new PerspectiveCamera
+            {
+                Position = cameraPosition,
+                LookDirection = new Vector3D(
+                    center.X - cameraPosition.X,
+                    center.Y - cameraPosition.Y,
+                    center.Z - cameraPosition.Z
+                ),
+                UpDirection = new Vector3D(0, 1, 0),
+                FieldOfView = 60
+            };
+
+            viewport.Camera = camera;
         }
     }
 }
