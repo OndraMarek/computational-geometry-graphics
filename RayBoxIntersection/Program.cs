@@ -10,11 +10,11 @@
 
         if (RayIntersectsCuboid(b,v,a,q))
         {
-            Console.WriteLine("Ray intersects the cuboid.");
+            Console.WriteLine("\nRay INTERSECTS the cuboid.\n");
         }
         else
         {
-            Console.WriteLine("Ray does not intersect the cuboid.");
+            Console.WriteLine("\nRay does NOT INTERSECT the cuboid.\n");
         }
         exitOrContinue();
     }
@@ -52,28 +52,25 @@
 
     private static double[] getUserInput(string element)
     {
-        Console.WriteLine("Enter the 3 elements for" + element + "separated by SPACES: ");
+        int size = 3;
+        Console.WriteLine($"Enter the 3 coordinates for '{element}' separated by SPACES: ");
         string[] input = Console.ReadLine().Split(' ');
-        if(input.Length != 3)
+
+        if(input.Length != size)
         {
-            Console.WriteLine("Invalid input. Please enter 3 elements separated by SPACES.");
+            Console.WriteLine("Input have to be 3 numbers. Please enter 3 coordinates separated by SPACES.");
             return getUserInput(element);
         }
-        double[] A = new double[3];
-        for (int i = 0; i < input.Length; i++)
+        double[] result = new double[size];
+        for (int i = 0; i < size; i++)
         {
-            if (!double.TryParse(input[i], out A[i]))
+            if (!double.TryParse(input[i], out result[i]))
             {
-                Console.WriteLine($"Invalid input '{input[i]}'. Please enter only integers.");
+                Console.WriteLine($"Invalid input '{input[i]}'. Please enter only numbers.");
                 return getUserInput(element);
             }
         }
-        return A;
-    }
-
-    private static void printOutput(int[] A, int[] S)
-    {
-        // Print the input array
+        return result;
     }
 
     private static void exitOrContinue()
