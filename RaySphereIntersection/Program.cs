@@ -2,13 +2,13 @@
 {
     static void Main()
     {
-        double[] s = getUserInputs("S");
+        double[] S = getUserInputs("S");
         double r = getUserInput("r");
 
-        double[] a = getUserInputs("A");
+        double[] A = getUserInputs("A");
         double[] q = getUserInputs("q");
 
-        if (RayIntersectsSphere(s, r, a, q))
+        if (RayIntersectsSphere(S, r, A, q))
         {
             Console.WriteLine("\nRay INTERSECTS the sphere.\n");
         }
@@ -19,9 +19,33 @@
         exitOrContinue();
     }
 
-    private static bool RayIntersectsSphere(double[] s, double r, double[] a, double[] q)
+    private static bool RayIntersectsSphere(double[] S, double r, double[] A, double[] q)
     {
-        return false;
+        double[] p = new double[3];
+        for (int i = 0; i < 3; i++)
+            p[i] = A[i] - S[i];
+
+        double a = ScalarProduct(q, q);
+        double b = 2 * ScalarProduct(p, q);
+        double c = ScalarProduct(p, p) - r * r;
+
+        double D = b * b - 4 * a * c;
+
+        if (D < 0)
+        {
+            return false;
+        }
+
+        double sqrtD = Math.Sqrt(D);
+        double t1 = (-b + sqrtD) / (2 * a);
+        double t2 = (-b - sqrtD) / (2 * a);
+
+        return t1 >= 0 || t2 >= 0;
+    }
+
+    private static double ScalarProduct(double[] v1, double[] v2)
+    {
+        return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
     }
 
     private static double[] getUserInputs(string element)
