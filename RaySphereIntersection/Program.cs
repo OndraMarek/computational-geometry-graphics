@@ -80,6 +80,12 @@
         Console.WriteLine($"Enter the radius '{element}' size: ");
         string input = Console.ReadLine();
 
+        if (input.Split(' ').Length > 1)
+        {
+            Console.WriteLine($"Invalid input '{input}'. Please enter only one number.");
+            return getUserInput(element);
+        }
+
         double result;
         if (!double.TryParse(input, out result))
         {
