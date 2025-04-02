@@ -10,11 +10,15 @@
 
         if (RayIntersectsSphere(S, r, A, q))
         {
+            Console.WriteLine("-----------------------------------");
             Console.WriteLine("\nRay INTERSECTS the sphere.\n");
+            Console.WriteLine("-----------------------------------");
         }
         else
         {
+            Console.WriteLine("-----------------------------------");
             Console.WriteLine("\nRay does NOT INTERSECT the sphere.\n");
+            Console.WriteLine("-----------------------------------");
         }
         exitOrContinue();
     }
@@ -91,6 +95,7 @@
         ConsoleKeyInfo key = Console.ReadKey(true);
         if (key.KeyChar == '1')
         {
+            Console.Clear();
             Main();
         }
         else
