@@ -8,10 +8,13 @@
         double[] A = getUserInputs("A");
         double[] q = getUserInputs("q");
 
-        if (RayIntersectsSphere(S, r, A, q))
+        double[]? intersection = RayIntersectsSphere(S, r, A, q);
+
+        if (intersection != null)
         {
             Console.WriteLine("-----------------------------------");
-            Console.WriteLine("\nRay INTERSECTS the sphere.\n");
+            Console.WriteLine("\nRay INTERSECTS the sphere.");
+            Console.WriteLine($"Intersection point coordinates: ({intersection[0]}, {intersection[1]}, {intersection[2]})\n");
             Console.WriteLine("-----------------------------------");
         }
         else
@@ -23,7 +26,7 @@
         exitOrContinue();
     }
 
-    private static bool RayIntersectsSphere(double[] S, double r, double[] A, double[] q)
+    private static double[]? RayIntersectsSphere(double[] S, double r, double[] A, double[] q)
     {
         double[] p = new double[3];
         for (int i = 0; i < 3; i++)
@@ -37,14 +40,37 @@
 
         if (D < 0)
         {
-            return false;
+            return null;
         }
 
         double sqrtD = Math.Sqrt(D);
         double t1 = (-b + sqrtD) / (2 * a);
         double t2 = (-b - sqrtD) / (2 * a);
 
-        return t1 >= 0 || t2 >= 0;
+        double[] intersection = new double[3];
+
+        if (t1 < 0 && t2 < 0)
+        {
+            return null;
+        }
+
+        if (t1 > 0)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                intersection[i] = A[i] + t1 * q[i];
+            }
+            return intersection;
+        }
+
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                intersection[i] = A[i] + t2 * q[i];
+            }
+            return intersection;
+        }
     }
 
     private static double ScalarProduct(double[] v1, double[] v2)
