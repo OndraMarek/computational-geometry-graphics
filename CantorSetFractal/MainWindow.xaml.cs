@@ -17,37 +17,19 @@ namespace CantorSetFractal
             InitializeComponent();
         }
 
-        private void DrawCantorSet_Click(object sender, RoutedEventArgs e)
-        {
-            drawCantorSetCanvas.Children.Clear();
-            if (int.TryParse(iterationsTextBox.Text, out int iterations))
-            {
-                double canvasWidth = drawCantorSetCanvas.ActualWidth - 2 * CanvasMargin;
-                if (canvasWidth > 0)
-                {
-                    DrawCantorSetRecursive(drawCantorSetCanvas, CanvasMargin, CanvasMargin, canvasWidth, iterations);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Zadejte prosím platné číslo pro počet iterací.", "Chyba vstupu");
-            }
-        }
-
-        private void DrawCantorSetRecursive(Canvas canvas, double x, double y, double width, int iterations)
+        private void DrawCantorSetRecursive(Canvas canvas, double x, double y, double width, int iterations, int maxIterations)
         {
             if (iterations <= 0)
             {
                 return;
             }
 
-            double currentY = y + iterations * LineHeight;
-            Line line = new Line
+            Line line = new()
             {
                 X1 = x,
-                Y1 = currentY,
+                Y1 = y + (maxIterations - iterations) * LineHeight,
+                Y2 = y + (maxIterations - iterations) * LineHeight,
                 X2 = x + width,
-                Y2 = currentY,
                 Stroke = Brushes.Black,
                 StrokeThickness = 2
             };
@@ -58,15 +40,21 @@ namespace CantorSetFractal
                 return;
             }
 
-            double newWidth = width / 3;
-            double x1 = x;
-            double x2 = x + 2 * newWidth;
-            double newY = y;
+            double oneThirdWidth = width / 3;
 
-            DrawCantorSetRecursive(canvas, x1, newY, newWidth, iterations - 1);
-            DrawCantorSetRecursive(canvas, x2, newY, newWidth, iterations - 1);
+            DrawCantorSetRecursive(canvas, x, y, oneThirdWidth, iterations - 1, maxIterations);
+            DrawCantorSetRecursive(canvas, x + 2 * oneThirdWidth, y, oneThirdWidth, iterations - 1, maxIterations);
         }
 
+        private void DrawCantorSet_Click(object sender, RoutedEventArgs e)
+        {
+            drawCantorSetCanvas.Children.Clear();
+
+            int iterations = iterationsTextBox.Text != "" ? int.Parse(iterationsTextBox.Text) : 0;
+            double canvasWidth = drawCantorSetCanvas.ActualWidth - 2 * CanvasMargin;
+
+            DrawCantorSetRecursive(drawCantorSetCanvas, CanvasMargin, CanvasMargin, canvasWidth, iterations, iterations);
+        }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
