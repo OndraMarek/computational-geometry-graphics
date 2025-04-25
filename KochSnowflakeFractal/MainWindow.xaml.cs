@@ -27,24 +27,16 @@ namespace KochSnowflakeFractal
             Point p2 = new(centerX + sideLength / 2, centerY);
             Point p3 = new(centerX, centerY - Math.Sqrt(3) / 2 * sideLength);
 
-            DrawKochEdge(p1, p2, iterations);
-            DrawKochEdge(p2, p3, iterations);
-            DrawKochEdge(p3, p1, iterations);
+            DrawEdge(p1, p2, iterations);
+            DrawEdge(p2, p3, iterations);
+            DrawEdge(p3, p1, iterations);
         }
 
-        private void DrawKochEdge(Point a, Point b, int iteration)
+        private void DrawEdge(Point a, Point b, int iteration)
         {
             if (iteration == 0)
             {
-                drawKochSnowflakeCanvas.Children.Add(new Line()
-                {
-                    X1 = a.X,
-                    Y1 = a.Y,
-                    X2 = b.X,
-                    Y2 = b.Y,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1
-                });
+                DrawLine(a, b);
             }
             else
             {
@@ -59,11 +51,24 @@ namespace KochSnowflakeFractal
                     oneThird.Y + dy / 2 + Math.Sqrt(3) / 2 * dx
                 );
 
-                DrawKochEdge(a, oneThird, iteration - 1);
-                DrawKochEdge(oneThird, peak, iteration - 1);
-                DrawKochEdge(peak, twoThirds, iteration - 1);
-                DrawKochEdge(twoThirds, b, iteration - 1);
+                DrawEdge(a, oneThird, iteration - 1);
+                DrawEdge(oneThird, peak, iteration - 1);
+                DrawEdge(peak, twoThirds, iteration - 1);
+                DrawEdge(twoThirds, b, iteration - 1);
             }
+        }
+
+        private void DrawLine(Point a, Point b)
+        {
+            drawKochSnowflakeCanvas.Children.Add(new Line()
+            {
+                X1 = a.X,
+                Y1 = a.Y,
+                X2 = b.X,
+                Y2 = b.Y,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            });
         }
 
         private void DrawKochSnowflake_Click(object sender, RoutedEventArgs e)
