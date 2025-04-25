@@ -12,6 +12,6 @@
         <TextBox x:Name="iterationsTextBox" HorizontalAlignment="Left" Height="23" Margin="159,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61" PreviewTextInput="NumberValidationTextBox"/>
         <Button x:Name="drawCantorSet" Content="Draw Cantor Set" HorizontalAlignment="Left" Margin="280,37,0,0" VerticalAlignment="Top" Width="94" Click="DrawCantorSet_Click"/>
         <Button x:Name="exit" Content="Exit" HorizontalAlignment="Left" Margin="625,37,0,0" VerticalAlignment="Top" Width="94" Click="Exit_Click"/>
-        <Canvas x:Name="drawCantorSetCanvas" Width="800" Height="400" Background="White" VerticalAlignment="Top" Margin="0,84,0,0"/>
+        <Canvas x:Name="drawCantorSetCanvas" Width="800" Height="350" Background="White" VerticalAlignment="Top" Margin="0,84,0,0"/>
     </Grid>
 </Window>

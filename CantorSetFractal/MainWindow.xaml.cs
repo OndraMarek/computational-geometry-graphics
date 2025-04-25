@@ -18,7 +18,7 @@ namespace CantorSetFractal
 
         private void DrawCantorSetRecursive(double x, double y, double width, int iterations, int maxIterations)
         {
-            if (iterations <= 0)
+            if (iterations < 0)
             {
                 return;
             }
