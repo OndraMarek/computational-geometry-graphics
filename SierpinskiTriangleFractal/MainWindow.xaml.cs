@@ -19,9 +19,9 @@ namespace SierpinskiTriangleFractal
             double centerY = drawSierpinskiTriangleCanvas.ActualHeight / 2;
             double size = Math.Min(drawSierpinskiTriangleCanvas.ActualWidth, drawSierpinskiTriangleCanvas.ActualHeight) * 0.8 / 2;
 
-            Point p1 = new Point(centerX, centerY - size * Math.Sqrt(3) / 2);
-            Point p2 = new Point(centerX - size, centerY + size * Math.Sqrt(3) / 2 / 2);
-            Point p3 = new Point(centerX + size, centerY + size * Math.Sqrt(3) / 2 / 2);
+            Point p1 = new(centerX, centerY - size * Math.Sqrt(3) / 2);
+            Point p2 = new(centerX - size, centerY + size * Math.Sqrt(3) / 2 / 2);
+            Point p3 = new(centerX + size, centerY + size * Math.Sqrt(3) / 2 / 2);
 
             DrawTriangle(p1, p2, p3, iterations);
         }
@@ -32,9 +32,9 @@ namespace SierpinskiTriangleFractal
 
             if (depth > 0)
             {
-                Point mid12 = new Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
-                Point mid23 = new Point((p2.X + p3.X) / 2, (p2.Y + p3.Y) / 2);
-                Point mid31 = new Point((p3.X + p1.X) / 2, (p3.Y + p1.Y) / 2);
+                Point mid12 = new((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
+                Point mid23 = new((p2.X + p3.X) / 2, (p2.Y + p3.Y) / 2);
+                Point mid31 = new((p3.X + p1.X) / 2, (p3.Y + p1.Y) / 2);
 
                 DrawFilledTriangle(mid12, mid23, mid31, Brushes.White);
 
@@ -46,9 +46,11 @@ namespace SierpinskiTriangleFractal
 
         private void DrawFilledTriangle(Point p1, Point p2, Point p3, Brush fill)
         {
-            Polygon triangle = new Polygon();
-            triangle.Points = new PointCollection { p1, p2, p3 };
-            triangle.Fill = fill;
+            Polygon triangle = new()
+            {
+                Points = [p1, p2, p3],
+                Fill = fill
+            };
             drawSierpinskiTriangleCanvas.Children.Add(triangle);
         }
 
