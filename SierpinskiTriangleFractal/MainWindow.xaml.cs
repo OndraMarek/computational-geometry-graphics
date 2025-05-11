@@ -32,15 +32,15 @@ namespace SierpinskiTriangleFractal
 
             if (depth > 0)
             {
-                Point mid12 = new((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
-                Point mid23 = new((p2.X + p3.X) / 2, (p2.Y + p3.Y) / 2);
-                Point mid31 = new((p3.X + p1.X) / 2, (p3.Y + p1.Y) / 2);
+                Point mid1 = new((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
+                Point mid2 = new((p2.X + p3.X) / 2, (p2.Y + p3.Y) / 2);
+                Point mid3 = new((p3.X + p1.X) / 2, (p3.Y + p1.Y) / 2);
 
-                DrawFilledTriangle(mid12, mid23, mid31, Brushes.White);
+                DrawFilledTriangle(mid1, mid2, mid3, Brushes.White);
 
-                DrawTriangle(p1, mid12, mid31, depth - 1);
-                DrawTriangle(mid12, p2, mid23, depth - 1);
-                DrawTriangle(mid31, mid23, p3, depth - 1);
+                DrawTriangle(p1, mid1, mid3, depth - 1);
+                DrawTriangle(mid1, p2, mid2, depth - 1);
+                DrawTriangle(mid3, mid2, p3, depth - 1);
             }
         }
 
