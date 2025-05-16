@@ -9,11 +9,18 @@ namespace MandelbrotSetFractal
     public partial class MainWindow : Window
     {
         const int width = 800;
-        const int height = 450;
+        const int height = 500;
+
+        private double minX = -2.5;
+        private double maxX = 1;
+        private double minY = -1;
+        private double maxY = 1;
 
         public MainWindow()
         {
             InitializeComponent();
+            mandelbrotImage.MouseLeftButtonDown += MandelbrotImage_MouseLeftButtonDown;
+            mandelbrotImage.MouseRightButtonDown += MandelbrotImage_MouseRightButtonDown;
         }
 
         private void DrawMadMandelbrotSet(int maxIterations)
@@ -22,16 +29,16 @@ namespace MandelbrotSetFractal
             int stride = width * 4;
             byte[] pixels = new byte[height * stride];
 
-            double scaleX = 3.5 / width;
-            double scaleY = 2.0 / height;
+            double scaleX = (maxX - minX) / width;
+            double scaleY = (maxY - minY) / height;
 
             for (int py = 0; py < height; py++)
             {
-                double y0 = (py * scaleY) - 1.0;
+                double y0 = minY + py * scaleY;
 
                 for (int px = 0; px < width; px++)
                 {
-                    double x0 = (px * scaleX) - 2.5;
+                    double x0 = minX + px * scaleX;
                     double x = 0.0;
                     double y = 0.0;
                     int iteration = 0;
@@ -59,8 +66,46 @@ namespace MandelbrotSetFractal
 
         private void DrawMandelbrotSet_Click(object sender, RoutedEventArgs e)
         {
-            int maxIterations = iterationsTextBox.Text != "" ? int.Parse(iterationsTextBox.Text) : 0;
-            DrawMadMandelbrotSet(maxIterations);
+            if (int.TryParse(iterationsTextBox.Text, out int maxIterations))
+            {
+                DrawMadMandelbrotSet(maxIterations);
+            }
+        }
+
+        private void MandelbrotImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2 && int.TryParse(iterationsTextBox.Text, out int maxIterations))
+            {
+                Point pos = e.GetPosition(mandelbrotImage);
+                double mouseX = pos.X;
+                double mouseY = pos.Y;
+
+                double xCenter = minX + (mouseX / width) * (maxX - minX);
+                double yCenter = minY + (mouseY / height) * (maxY - minY);
+
+                double newWidth = (maxX - minX) / 2;
+                double newHeight = (maxY - minY) / 2;
+
+                minX = xCenter - newWidth / 2;
+                maxX = xCenter + newWidth / 2;
+                minY = yCenter - newHeight / 2;
+                maxY = yCenter + newHeight / 2;
+
+                DrawMadMandelbrotSet(maxIterations);
+            }
+        }
+
+        private void MandelbrotImage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            minX = -2.5;
+            maxX = 1;
+            minY = -1;
+            maxY = 1;
+
+            if (int.TryParse(iterationsTextBox.Text, out int maxIterations))
+            {
+                DrawMadMandelbrotSet(maxIterations);
+            }
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
