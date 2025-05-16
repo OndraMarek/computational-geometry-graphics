@@ -54,34 +54,7 @@ namespace MandelbrotSetFractal
                         iteration++;
                     }
 
-                    byte r,g,b;
-                    if (iteration == maxIterations)
-                    {
-                        r = g = b = 0;
-                    }
-                    else
-                    {
-                        double t = (double)iteration / maxIterations;
-
-                        switch (selectedScheme)
-                        {
-                            case "Fire":
-                                r = (byte)Math.Min(255, 255 * t * 3);
-                                g = (byte)Math.Min(255, 255 * t * t);
-                                b = (byte)Math.Min(255, 100 * t);
-                                break;
-                            case "Ocean":
-                                r = (byte)0;
-                                g = (byte)Math.Min(255, 255 * Math.Sqrt(t));
-                                b = (byte)Math.Min(255, 255 * t);
-                                break;
-                            case "Grayscale":
-                            default:
-                                byte gray = (byte)(255 - (iteration * 255 / maxIterations));
-                                r = g = b = gray;
-                                break;
-                        }
-                    }
+                    (byte r, byte g, byte b) = GetColorScheme(iteration, maxIterations, selectedScheme);
 
                     int pixelIndex = py * stride + px * 4;
                     pixels[pixelIndex + 0] = b;
@@ -93,6 +66,64 @@ namespace MandelbrotSetFractal
 
             bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
             mandelbrotImage.Source = bitmap;
+        }
+
+        private static (byte r, byte g, byte b) GetColorScheme(int iteration, int maxIterations, string scheme)
+        {
+            byte r, g, b;
+
+            if (iteration == maxIterations)
+            {
+                r = g = b = 0;
+            }
+            else
+            {
+                double t = (double)iteration / maxIterations;
+
+                switch (scheme)
+                {
+                    case "Fire":
+                        (r,g,b) = GetFireColorScheme(t);
+                        break;
+                    case "Ocean":
+                        (r, g, b) = GetOceanColorScheme(t);
+                        break;
+                    case "Rainbow":
+                        (r, g, b) = GetRainbowColorScheme(t);
+                        break;
+                    case "Grayscale":
+                    default:
+                        byte gray = (byte)(255 - (iteration * 255 / maxIterations));
+                        r = g = b = gray;
+                        break;
+                }
+            }
+
+            return (r, g, b);
+        }
+
+        private static (byte r, byte g, byte b) GetFireColorScheme(double t)
+        {
+            byte r = (byte)Math.Min(255, 255 * t * 3);
+            byte g = (byte)Math.Min(255, 255 * t * t);
+            byte b = (byte)Math.Min(255, 100 * t);
+            return (r, g, b);
+        }
+
+        private static (byte r, byte g, byte b) GetOceanColorScheme(double t)
+        {
+            byte r = 0;
+            byte g = (byte)Math.Min(255, 255 * Math.Sqrt(t));
+            byte b = (byte)Math.Min(255, 255 * t);
+            return (r, g, b);
+        }
+
+        private static (byte r, byte g, byte b) GetRainbowColorScheme(double t)
+        {
+            byte r = (byte)(255 * Math.Sin(t * 2 * Math.PI));
+            byte g = (byte)(255 * Math.Sin(t * 2 * Math.PI + 2 * Math.PI / 3));
+            byte b = (byte)(255 * Math.Sin(t * 2 * Math.PI + 4 * Math.PI / 3));
+            return (r, g, b);
         }
 
         private void DrawMandelbrotSet_Click(object sender, RoutedEventArgs e)

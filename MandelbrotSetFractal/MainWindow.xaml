@@ -14,6 +14,7 @@
             <ComboBoxItem Content="Grayscale"/>
             <ComboBoxItem Content="Fire"/>
             <ComboBoxItem Content="Ocean"/>
+            <ComboBoxItem Content="Rainbow"/>
         </ComboBox>
         <Button x:Name="drawMandelbrotSet" Content="Draw Mandelbrot Set" HorizontalAlignment="Left" Margin="280,37,0,0" VerticalAlignment="Top" Width="152" Click="DrawMandelbrotSet_Click"/>
         <Button x:Name="exit" Content="Exit" HorizontalAlignment="Left" Margin="625,37,0,0" VerticalAlignment="Top" Width="94" Click="Exit_Click"/>
