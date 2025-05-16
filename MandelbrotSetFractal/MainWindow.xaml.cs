@@ -33,7 +33,7 @@ namespace MandelbrotSetFractal
             double scaleX = (maxX - minX) / width;
             double scaleY = (maxY - minY) / height;
 
-            string selectedScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem)?.Content.ToString();
+            string? selectedScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem)?.Content.ToString();
 
             for (int py = 0; py < height; py++)
             {
@@ -54,7 +54,7 @@ namespace MandelbrotSetFractal
                         iteration++;
                     }
 
-                    byte r = 0, g = 0, b = 0;
+                    byte r,g,b;
                     if (iteration == maxIterations)
                     {
                         r = g = b = 0;
@@ -66,14 +66,14 @@ namespace MandelbrotSetFractal
                         switch (selectedScheme)
                         {
                             case "Fire":
-                                r = (byte)(Math.Min(255, 255 * t * 3));
-                                g = (byte)(Math.Min(255, 255 * t * t));
-                                b = (byte)(Math.Min(255, 100 * t));
+                                r = (byte)Math.Min(255, 255 * t * 3);
+                                g = (byte)Math.Min(255, 255 * t * t);
+                                b = (byte)Math.Min(255, 100 * t);
                                 break;
                             case "Ocean":
-                                r = (byte)(0);
-                                g = (byte)(Math.Min(255, 255 * Math.Sqrt(t)));
-                                b = (byte)(Math.Min(255, 255 * t));
+                                r = (byte)0;
+                                g = (byte)Math.Min(255, 255 * Math.Sqrt(t));
+                                b = (byte)Math.Min(255, 255 * t);
                                 break;
                             case "Grayscale":
                             default:
@@ -111,8 +111,8 @@ namespace MandelbrotSetFractal
                 double mouseX = pos.X;
                 double mouseY = pos.Y;
 
-                double xCenter = minX + (mouseX / width) * (maxX - minX);
-                double yCenter = minY + (mouseY / height) * (maxY - minY);
+                double xCenter = minX + mouseX / width * (maxX - minX);
+                double yCenter = minY + mouseY / height * (maxY - minY);
 
                 double newWidth = (maxX - minX) / 2;
                 double newHeight = (maxY - minY) / 2;
