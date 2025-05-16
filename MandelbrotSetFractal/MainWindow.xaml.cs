@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -32,6 +33,8 @@ namespace MandelbrotSetFractal
             double scaleX = (maxX - minX) / width;
             double scaleY = (maxY - minY) / height;
 
+            string selectedScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem)?.Content.ToString();
+
             for (int py = 0; py < height; py++)
             {
                 double y0 = minY + py * scaleY;
@@ -51,11 +54,39 @@ namespace MandelbrotSetFractal
                         iteration++;
                     }
 
-                    int color = iteration == maxIterations ? 0 : 255 - (iteration * 255 / maxIterations);
+                    byte r = 0, g = 0, b = 0;
+                    if (iteration == maxIterations)
+                    {
+                        r = g = b = 0;
+                    }
+                    else
+                    {
+                        double t = (double)iteration / maxIterations;
+
+                        switch (selectedScheme)
+                        {
+                            case "Fire":
+                                r = (byte)(Math.Min(255, 255 * t * 3));
+                                g = (byte)(Math.Min(255, 255 * t * t));
+                                b = (byte)(Math.Min(255, 100 * t));
+                                break;
+                            case "Ocean":
+                                r = (byte)(0);
+                                g = (byte)(Math.Min(255, 255 * Math.Sqrt(t)));
+                                b = (byte)(Math.Min(255, 255 * t));
+                                break;
+                            case "Grayscale":
+                            default:
+                                byte gray = (byte)(255 - (iteration * 255 / maxIterations));
+                                r = g = b = gray;
+                                break;
+                        }
+                    }
+
                     int pixelIndex = py * stride + px * 4;
-                    pixels[pixelIndex + 0] = (byte)color;
-                    pixels[pixelIndex + 1] = (byte)color;
-                    pixels[pixelIndex + 2] = (byte)color;
+                    pixels[pixelIndex + 0] = b;
+                    pixels[pixelIndex + 1] = g;
+                    pixels[pixelIndex + 2] = r;
                     pixels[pixelIndex + 3] = 255;
                 }
             }

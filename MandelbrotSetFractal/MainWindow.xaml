@@ -9,9 +9,15 @@
     <Grid>
         <Label Content="Number of iterations:" Margin="32,35,0,0" Height="27" Width="127" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBox x:Name="iterationsTextBox" HorizontalAlignment="Left" Height="23" Margin="159,37,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61" PreviewTextInput="NumberValidationTextBox"/>
+        <Label Content="Color scheme:" Margin="32,70,0,0" Height="27" Width="127" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox x:Name="colorSchemeComboBox" SelectedIndex="0" HorizontalAlignment="Left" Margin="159,72,0,0" VerticalAlignment="Top" Width="150">
+            <ComboBoxItem Content="Grayscale"/>
+            <ComboBoxItem Content="Fire"/>
+            <ComboBoxItem Content="Ocean"/>
+        </ComboBox>
         <Button x:Name="drawMandelbrotSet" Content="Draw Mandelbrot Set" HorizontalAlignment="Left" Margin="280,37,0,0" VerticalAlignment="Top" Width="152" Click="DrawMandelbrotSet_Click"/>
         <Button x:Name="exit" Content="Exit" HorizontalAlignment="Left" Margin="625,37,0,0" VerticalAlignment="Top" Width="94" Click="Exit_Click"/>
 
-        <Image x:Name="mandelbrotImage" Margin="10,80,10,10"/>
+        <Image x:Name="mandelbrotImage" Margin="10,115,10,10"/>
     </Grid>
 </Window>
