@@ -9,13 +9,13 @@ namespace MandelbrotSetFractal
 {
     public partial class MainWindow : Window
     {
-        const int width = 800;
-        const int height = 500;
+        const int imageWidth = 800;
+        const int imageHeight = 500;
 
-        private double minX = -2.5;
-        private double maxX = 1;
-        private double minY = -1;
-        private double maxY = 1;
+        private double viewportMinX = -2.5;
+        private double viewportMaxX = 1;
+        private double viewportMinY = -1;
+        private double viewportMaxY = 1;
 
         public MainWindow()
         {
@@ -26,27 +26,27 @@ namespace MandelbrotSetFractal
 
         private void DrawMadMandelbrotSet(int maxIterations)
         {
-            WriteableBitmap bitmap = new(width, height, 96, 96, PixelFormats.Bgra32, null);
-            byte[] pixels = new byte[height * width * 4];
+            WriteableBitmap mandelbrotBitmap = new(imageWidth, imageHeight, 96, 96, PixelFormats.Bgra32, null);
+            byte[] pixelsBuffer = new byte[imageHeight * imageWidth * 4];
 
-            double scaleX = (maxX - minX) / width;
-            double scaleY = (maxY - minY) / height;
-            string? selectedScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem)?.Content.ToString();
+            double pixelToViewportScaleX = (viewportMaxX - viewportMinX) / imageWidth;
+            double pixelToViewportScaleY = (viewportMaxY - viewportMinY) / imageHeight;
+            string? selectedColorScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem).Content.ToString();
 
-            for (int py = 0; py < height; py++)
+            for (int py = 0; py < imageHeight; py++)
             {
-                double y0 = minY + py * scaleY;
-                for (int px = 0; px < width; px++)
+                double viewportY = viewportMinY + py * pixelToViewportScaleY;
+                for (int px = 0; px < imageWidth; px++)
                 {
-                    double x0 = minX + px * scaleX;
-                    int iteration = CalculateMandelbrotIterations(x0, y0, maxIterations);
-                    (byte r, byte g, byte b) = GetColorScheme(iteration, maxIterations, selectedScheme);
-                    SetPixelColor(pixels, py * width + px, r, g, b);
+                    double viewportX = viewportMinX + px * pixelToViewportScaleX;
+                    int currentIteration = CalculateMandelbrotIterations(viewportX, viewportY, maxIterations);
+                    (byte r, byte g, byte b) = GetColorScheme(currentIteration, maxIterations, selectedColorScheme);
+                    SetPixelColor(pixelsBuffer, py * imageWidth + px, r, g, b);
                 }
             }
 
-            bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, width * 4, 0);
-            mandelbrotImage.Source = bitmap;
+            mandelbrotBitmap.WritePixels(new Int32Rect(0, 0, imageWidth, imageHeight), pixelsBuffer, imageWidth * 4, 0);
+            mandelbrotImage.Source = mandelbrotBitmap;
         }
 
         private static int CalculateMandelbrotIterations(double x0, double y0, int maxIterations)
@@ -143,19 +143,19 @@ namespace MandelbrotSetFractal
             if (e.ClickCount == 2 && int.TryParse(iterationsTextBox.Text, out int maxIterations))
             {
                 Point pos = e.GetPosition(mandelbrotImage);
-                double mouseX = pos.X;
-                double mouseY = pos.Y;
+                double mousePixelX = pos.X;
+                double mousePixelY = pos.Y;
 
-                double xCenter = minX + mouseX / width * (maxX - minX);
-                double yCenter = minY + mouseY / height * (maxY - minY);
+                double viewportCenterX = viewportMinX + mousePixelX / imageWidth * (viewportMaxX - viewportMinX);
+                double viewportCenterY = viewportMinY + mousePixelY / imageHeight * (viewportMaxY - viewportMinY);
 
-                double newWidth = (maxX - minX) / 2;
-                double newHeight = (maxY - minY) / 2;
+                double newViewportWidth = (viewportMaxX - viewportMinX) / 2;
+                double newViewportHeight = (viewportMaxY - viewportMinY) / 2;
 
-                minX = xCenter - newWidth / 2;
-                maxX = xCenter + newWidth / 2;
-                minY = yCenter - newHeight / 2;
-                maxY = yCenter + newHeight / 2;
+                viewportMinX = viewportCenterX - newViewportWidth / 2;
+                viewportMaxX = viewportCenterX + newViewportWidth / 2;
+                viewportMinY = viewportCenterY - newViewportHeight / 2;
+                viewportMaxY = viewportCenterY + newViewportHeight / 2;
 
                 DrawMadMandelbrotSet(maxIterations);
             }
@@ -163,10 +163,10 @@ namespace MandelbrotSetFractal
 
         private void MandelbrotImage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            minX = -2.5;
-            maxX = 1;
-            minY = -1;
-            maxY = 1;
+            viewportMinX = -2.5;
+            viewportMaxX = 1;
+            viewportMinY = -1;
+            viewportMaxY = 1;
 
             if (int.TryParse(iterationsTextBox.Text, out int maxIterations))
             {
