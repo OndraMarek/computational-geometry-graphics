@@ -24,7 +24,7 @@ namespace MandelbrotSetFractal
             mandelbrotImage.MouseRightButtonDown += MandelbrotImage_MouseRightButtonDown;
         }
 
-        private void DrawMadMandelbrotSet(int maxIterations)
+        private void DrawMandelbrotSet(int maxIterations)
         {
             WriteableBitmap mandelbrotBitmap = new(imageWidth, imageHeight, 96, 96, PixelFormats.Bgra32, null);
             byte[] pixelsBuffer = new byte[imageHeight * imageWidth * 4];
@@ -36,12 +36,14 @@ namespace MandelbrotSetFractal
             for (int py = 0; py < imageHeight; py++)
             {
                 double viewportY = viewportMinY + py * pixelToViewportScaleY;
+                int rowOffset = py * imageWidth;
+
                 for (int px = 0; px < imageWidth; px++)
                 {
                     double viewportX = viewportMinX + px * pixelToViewportScaleX;
-                    int currentIteration = CalculateMandelbrotIterations(viewportX, viewportY, maxIterations);
+                    int currentIteration = GetMandelbrotIterations(viewportX, viewportY, maxIterations);
                     (byte r, byte g, byte b) = GetColorScheme(currentIteration, maxIterations, selectedColorScheme);
-                    SetPixelColor(pixelsBuffer, py * imageWidth + px, r, g, b);
+                    WritePixelColor(pixelsBuffer, rowOffset + px, r, g, b);
                 }
             }
 
@@ -49,21 +51,23 @@ namespace MandelbrotSetFractal
             mandelbrotImage.Source = mandelbrotBitmap;
         }
 
-        private static int CalculateMandelbrotIterations(double x0, double y0, int maxIterations)
+        private static int GetMandelbrotIterations(double cReal, double cImaginary, int maxIterations)
         {
-            double x = 0.0, y = 0.0;
+            double zReal = 0.0, zImaginary = 0.0;
             int iteration = 0;
-            while (x * x + y * y <= 4 && iteration < maxIterations)
+
+            while (zReal * zReal + zImaginary * zImaginary <= 4 && iteration < maxIterations)
             {
-                double xtemp = x * x - y * y + x0;
-                y = 2 * x * y + y0;
-                x = xtemp;
+                double zRealTemp = zReal * zReal - zImaginary * zImaginary + cReal;
+                zImaginary = 2 * zReal * zImaginary + cImaginary;
+                zReal = zRealTemp;
                 iteration++;
             }
+
             return iteration;
         }
 
-        private static void SetPixelColor(byte[] pixels, int index, byte r, byte g, byte b)
+        private static void WritePixelColor(byte[] pixels, int index, byte r, byte g, byte b)
         {
             int pixelIndex = index * 4;
             pixels[pixelIndex + 0] = b;
@@ -134,7 +138,7 @@ namespace MandelbrotSetFractal
         {
             if (int.TryParse(iterationsTextBox.Text, out int maxIterations))
             {
-                DrawMadMandelbrotSet(maxIterations);
+                DrawMandelbrotSet(maxIterations);
             }
         }
 
@@ -157,7 +161,7 @@ namespace MandelbrotSetFractal
                 viewportMinY = viewportCenterY - newViewportHeight / 2;
                 viewportMaxY = viewportCenterY + newViewportHeight / 2;
 
-                DrawMadMandelbrotSet(maxIterations);
+                DrawMandelbrotSet(maxIterations);
             }
         }
 
@@ -170,7 +174,7 @@ namespace MandelbrotSetFractal
 
             if (int.TryParse(iterationsTextBox.Text, out int maxIterations))
             {
-                DrawMadMandelbrotSet(maxIterations);
+                DrawMandelbrotSet(maxIterations);
             }
         }
 
