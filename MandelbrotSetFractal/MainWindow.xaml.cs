@@ -27,45 +27,49 @@ namespace MandelbrotSetFractal
         private void DrawMadMandelbrotSet(int maxIterations)
         {
             WriteableBitmap bitmap = new(width, height, 96, 96, PixelFormats.Bgra32, null);
-            int stride = width * 4;
-            byte[] pixels = new byte[height * stride];
+            byte[] pixels = new byte[height * width * 4];
 
             double scaleX = (maxX - minX) / width;
             double scaleY = (maxY - minY) / height;
-
             string? selectedScheme = ((ComboBoxItem)colorSchemeComboBox.SelectedItem)?.Content.ToString();
 
             for (int py = 0; py < height; py++)
             {
                 double y0 = minY + py * scaleY;
-
                 for (int px = 0; px < width; px++)
                 {
                     double x0 = minX + px * scaleX;
-                    double x = 0.0;
-                    double y = 0.0;
-                    int iteration = 0;
-
-                    while (x * x + y * y <= 4 && iteration < maxIterations)
-                    {
-                        double xtemp = x * x - y * y + x0;
-                        y = 2 * x * y + y0;
-                        x = xtemp;
-                        iteration++;
-                    }
-
+                    int iteration = CalculateMandelbrotIterations(x0, y0, maxIterations);
                     (byte r, byte g, byte b) = GetColorScheme(iteration, maxIterations, selectedScheme);
-
-                    int pixelIndex = py * stride + px * 4;
-                    pixels[pixelIndex + 0] = b;
-                    pixels[pixelIndex + 1] = g;
-                    pixels[pixelIndex + 2] = r;
-                    pixels[pixelIndex + 3] = 255;
+                    SetPixelColor(pixels, py * width + px, r, g, b);
                 }
             }
 
-            bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
+            bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, width * 4, 0);
             mandelbrotImage.Source = bitmap;
+        }
+
+        private static int CalculateMandelbrotIterations(double x0, double y0, int maxIterations)
+        {
+            double x = 0.0, y = 0.0;
+            int iteration = 0;
+            while (x * x + y * y <= 4 && iteration < maxIterations)
+            {
+                double xtemp = x * x - y * y + x0;
+                y = 2 * x * y + y0;
+                x = xtemp;
+                iteration++;
+            }
+            return iteration;
+        }
+
+        private static void SetPixelColor(byte[] pixels, int index, byte r, byte g, byte b)
+        {
+            int pixelIndex = index * 4;
+            pixels[pixelIndex + 0] = b;
+            pixels[pixelIndex + 1] = g;
+            pixels[pixelIndex + 2] = r;
+            pixels[pixelIndex + 3] = 255;
         }
 
         private static (byte r, byte g, byte b) GetColorScheme(int iteration, int maxIterations, string scheme)
